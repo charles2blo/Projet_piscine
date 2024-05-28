@@ -40,6 +40,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['photo'])) {
     if ($uploadOk == 0) {
         echo "Désolé, votre fichier n'a pas été téléchargé.";
     } else {
+        // Assurez-vous que le dossier existe
+        if (!is_dir($target_dir)) {
+            if (!mkdir($target_dir, 0777, true)) {
+                echo "Désolé, une erreur est survenue lors de la création du dossier.";
+                exit;
+            }
+        }
+
         if (move_uploaded_file($photo["tmp_name"], $target_file)) {
             $stmt = $pdo->prepare("UPDATE utilisateurs SET photo = ? WHERE id = ?");
             $stmt->execute([$target_file, $user_id]);
