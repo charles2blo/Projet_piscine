@@ -2,18 +2,16 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f5f5f5;
 }
 .wrapper {
     width: 100%;
     margin: 0 auto;
-    min-height: 100vh;
+    min-height: 100vh; /* Assure que la wrapper couvre toute la hauteur de la vue */
     position: relative;
-    padding-bottom: 50px;
+    padding-bottom: 50px; /* Ajouté pour l'espacement du footer */
 }
 .header {
-    background: #007bff;
-    color: white;
+    background: #f4f4f4;
     padding: 20px;
     text-align: center;
     display: flex;
@@ -27,8 +25,8 @@ body {
     margin: 0;
 }
 .navigation {
-    background: #474095;
-    color: rgb(0, 0, 0);
+    background: #333;
+    color: white;
     overflow: hidden;
 }
 .navigation a {
@@ -45,20 +43,15 @@ body {
 }
 .section {
     padding: 20px;
-    background: white;
-    margin: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 .footer {
-    background: #007bff;
-    color: white;
+    background: #f4f4f4;
     text-align: center;
     padding: 10px;
     position: fixed;
     bottom: 0;
     width: 100%;
-    height: 50px;
+    height: 50px; /* Hauteur fixée pour le footer */
 }
 
 #carrousel {
@@ -66,9 +59,9 @@ body {
     height: 225px;
     width: 225px;
     margin: auto;
-    overflow: hidden;
-    background-color: #f9f9f9;
-    border: 2px solid #ddd;
+    overflow: hidden; /* Assure que les images ne débordent pas */
+    background-color: #f9f9f9; /* Couleur de fond */
+    border: 2px solid #ddd; /* Bordure légère pour mieux délimiter le carrousel */
 }
 
 #carrousel ul {
@@ -86,19 +79,19 @@ body {
 
 #bouton {
     text-align: center;
-    margin-top: 10px;
+    margin-top: 10px; /* Espacement pour le bouton */
 }
 
 .prev, .next {
-    background-color: transparent;
-    color: grey;
-    font-size: 24px;
-    border: none;
-    cursor: pointer;
+    background-color: transparent; /* Fond transparent pour montrer les flèches grises */
+    color: grey; /* Couleur des flèches */
+    font-size: 24px; /* Taille des flèches */
+    border: none; /* Pas de bordure */
+    cursor: pointer; /* Indicateur de clic */
 }
 
 .prev:hover, .next:hover {
-    color: black;
+    color: black; /* Couleur des flèches au survol */
 }
 
 /* Dropdown Menu */
@@ -146,25 +139,25 @@ body {
 
 /* Modal (popup) styles */
 .modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
     left: 0;
     top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0,0.4);
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
     padding-top: 60px;
 }
 
 .modal-content {
     background-color: #fefefe;
-    margin: 5% auto;
+    margin: 5% auto; /* 15% from the top and centered */
     padding: 20px;
     border: 1px solid #888;
-    width: 80%;
+    width: 80%; /* Could be more or less, depending on screen size */
 }
 
 .close {
