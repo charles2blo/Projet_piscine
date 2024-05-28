@@ -1,19 +1,23 @@
+<?php
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agora Francia</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="style.css" rel="stylesheet" type="text/css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="script.js"></script>
 </head>
+
 <body>
 <div class="wrapper">
     <div class="header">
-        <img src="logo.png" width="100" height="100" alt="logoAgora">
         <h1>Agora Francia</h1>
+        <img src="logo.png" width="100" height="100" alt="logoAgora">
     </div>
     <div class="navigation">
         <a href="#accueil"><i class="fas fa-home"></i> Accueil</a>
@@ -23,8 +27,13 @@
         <div class="dropdown">
             <a href="#votrecompte" class="dropbtn"><i class="fas fa-user"></i> Votre Compte</a>
             <div class="dropdown-content">
+                <?php if (isset($_SESSION['user_id'])): ?>
+                <a href="profile.php">Mon Profil</a>
+                <a href="logout.php">Se Déconnecter</a>
+                <?php else: ?>
                 <a href="#" id="login-btn">Se connecter</a>
                 <a href="#" id="signup-btn">S'inscrire</a>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -57,7 +66,7 @@
             <span class="close">&times;</span>
             <div id="login-form">
                 <h2>Se connecter</h2>
-                <form>
+                <form action="login.php" method="post">
                     <label for="email">Email:</label>
                     <input type="email" id="email" name="email" required><br>
                     <label for="password">Mot de passe:</label>
@@ -67,11 +76,15 @@
             </div>
             <div id="signup-form" style="display:none;">
                 <h2>S'inscrire</h2>
-                <form>
+                <form action="signup.php" method="post">
                     <label for="new-email">Email:</label>
                     <input type="email" id="new-email" name="new-email" required><br>
                     <label for="new-password">Mot de passe:</label>
                     <input type="password" id="new-password" name="new-password" required><br>
+                    <label for="first_name">Prénom:</label>
+                    <input type="text" id="first_name" name="first_name" required><br>
+                    <label for="last_name">Nom:</label>
+                    <input type="text" id="last_name" name="last_name" required><br>
                     <input type="submit" value="S'inscrire">
                 </form>
             </div>
