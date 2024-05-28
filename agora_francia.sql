@@ -170,6 +170,25 @@ CREATE TABLE `utilisateurs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
+-- Contraintes pour la table `adresses`
+--
+
+CREATE TABLE adresses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    utilisateur_id INT NOT NULL,
+    nom VARCHAR(50) NOT NULL,
+    prenom VARCHAR(50) NOT NULL,
+    adresse_ligne1 VARCHAR(255) NOT NULL,
+    adresse_ligne2 VARCHAR(255) DEFAULT NULL,
+    ville VARCHAR(50) NOT NULL,
+    code_postal VARCHAR(20) NOT NULL,
+    pays VARCHAR(50) NOT NULL,
+    numero_telephone VARCHAR(20) NOT NULL;
+    FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id)
+);
+
+
+--
 -- Index pour les tables déchargées
 --
 
@@ -423,6 +442,8 @@ ALTER TABLE `transactions`
   ADD CONSTRAINT `transactions_ibfk_1` FOREIGN KEY (`acheteur_id`) REFERENCES `utilisateurs` (`id`),
   ADD CONSTRAINT `transactions_ibfk_2` FOREIGN KEY (`article_id`) REFERENCES `articles` (`id`);
 COMMIT;
+
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
