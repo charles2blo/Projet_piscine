@@ -10,6 +10,7 @@ body {
 }
 .header {
     background: #fafafa;
+    color: rgb(0, 0, 0);
     padding: 20px;
     text-align: center;
     display: flex;
