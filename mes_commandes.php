@@ -51,24 +51,24 @@ if ($commandes) {
     </style>
 </head>
 <body>
-    <h1>Mes Commandes</h1>
-    <div class="commandes">
-        <?php if ($commandes): ?>
-            <?php foreach ($commandes as $commande): ?>
-                <div class="commande">
-                    <h2>Commande #<?php echo htmlspecialchars($commande['id']); ?></h2>
-                    <p>Date: <?php echo htmlspecialchars($commande['date']); ?></p>
-                    <?php if (isset($articles[$commande['id']])): ?>
-                        <h3>Article</h3>
-                        <p>Nom: <?php echo htmlspecialchars($articles[$commande['id']]['nom']); ?></p>
-                        <p>Description: <?php echo htmlspecialchars($articles[$commande['id']]['description']); ?></p>
-                        <p>Prix: <?php echo htmlspecialchars($articles[$commande['id']]['prix']); ?> €</p>
-                    <?php endif; ?>
-                </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p>Aucune commande en cours.</p>
-        <?php endif; ?>
-    </div>
+<h1>Mes Commandes</h1>
+<div class="commandes">
+    <?php if ($commandes): ?>
+        <?php foreach ($commandes as $commande): ?>
+            <div class="commande">
+                <h2>Commande #<?php echo htmlspecialchars($commande['id']); ?></h2>
+                <p>Date: <?php echo htmlspecialchars($commande['date']); ?></p>
+                <?php if (isset($articles[$commande['id']])): ?>
+                    <h3>Article</h3>
+                    <p>Nom: <?php echo htmlspecialchars($articles[$commande['id']]['nom']); ?></p>
+                    <p>Description: <?php echo htmlspecialchars($articles[$commande['id']]['description']); ?></p>
+                    <p>Prix: <?php echo htmlspecialchars($articles[$commande['id']]['prix']); ?> €</p>
+                <?php endif; ?>
+            </div>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <p>Aucune commande en cours.</p>
+    <?php endif; ?>
+</div>
 </body>
 </html>

@@ -174,23 +174,23 @@ body {
     cursor: pointer;
 }
 
-#address-container, #payment-container {
+#address-container, #payment-container, #orders-container, #logout-container {
     margin-top: 20px;
     border: 1px solid #ddd;
     padding: 10px;
     background-color: #f9f9f9;
 }
 
-#address-container p, #payment-container p {
+#address-container p, #payment-container p, #orders-container p, #logout-container p {
     border-bottom: 1px solid #ccc;
     padding: 10px 0;
 }
 
-#address-container p:last-child, #payment-container p:last-child {
+#address-container p:last-child, #payment-container p:last-child, #orders-container p:last-child, #logout-container p:last-child {
     border-bottom: none;
 }
 
-#toggle-addresses, #toggle-payments {
+#toggle-addresses, #toggle-payments, #toggle-orders, #toggle-logout {
     display: inline-block;
     margin-top: 20px;
     padding: 10px 20px;
@@ -201,6 +201,6 @@ body {
     cursor: pointer;
 }
 
-#toggle-addresses:hover, #toggle-payments:hover {
+#toggle-addresses:hover, #toggle-payments:hover, #toggle-orders:hover, #toggle-logout:hover {
     background-color: #45a049;
 }

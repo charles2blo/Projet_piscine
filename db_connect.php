@@ -1,14 +1,14 @@
 <?php
-$host = 'localhost';
-$db = 'agora_francia';
-$user = 'root'; // Changez ceci en fonction de votre configuration
-$pass = ''; // Changez ceci en fonction de votre configuration
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "agora_francia";
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
+    $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Erreur de connexion à la base de données: " . $e->getMessage());
+} catch(PDOException $e) {
+    echo "Connection failed: " . $e->getMessage();
+    die();
 }
 ?>
-

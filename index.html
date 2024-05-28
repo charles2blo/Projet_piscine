@@ -9,10 +9,8 @@ session_start();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agora Francia</title>
     <link href="style.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="script.js"></script>
-    <!-- Ajouter les icônes FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
@@ -27,6 +25,9 @@ session_start();
         <a href="#toutparcourir"><i class="fas fa-th-list"></i> Tout Parcourir</a>
         <a href="#notifications"><i class="fas fa-bell"></i> Notifications</a>
         <a href="#panier"><i class="fas fa-shopping-cart"></i> Panier</a>
+        <?php if (isset($_SESSION['user_id'])): ?>
+        <a href="publish_article.php">Publier un article</a>
+        <?php endif; ?>
         <div class="dropdown">
             <a href="#votrecompte" class="dropbtn"><i class="fas fa-user"></i> Votre Compte</a>
             <div class="dropdown-content">
@@ -95,7 +96,13 @@ session_start();
     </div>
 
     <footer class="footer">
-        <p>Contactez-nous : <a href="mailto:contact@agorafrancia.fr">contact@agorafrancia.fr</a> | Téléphone : <a href="tel:+33123456789">01 23 45 67 89</a> | <a href="https://www.google.fr/maps/place/37+Quai+de+Grenelle,+75015+Paris/@48.8515004,2.2846575,17z/data=!3m1!4b1!4m6!3m5!1s0x47e6700497ee3ec5:0xdd60f514adcdb346!8m2!3d48.8515004!4d2.2872324!16s%2Fg%2F11bw3y1mf8?entry=ttu" target="_blank"><i class="fas fa-map-marker-alt"></i> bureaux</a></p>
+        <p>
+            Contactez-nous : <a href="mailto:contact@agorafrancia.fr">contact@agorafrancia.fr</a> |
+            Téléphone : <a href="tel:+33123456789">01 23 45 67 89</a> |
+            <a href="https://www.google.fr/maps/place/37+Quai+de+Grenelle,+75015+Paris/@48.8515004,2.2846575,17z/data=!3m1!4b1!4m6!3m5!1s0x47e6700497ee3ec5:0xdd60f514adcdb346!8m2!3d48.8515004!4d2.2872324!16s%2Fg%2F11bw3y1mf8?entry=ttu" target="_blank">
+                <i class="fas fa-map-marker-alt"></i> Localisation
+            </a>
+        </p>
     </footer>
 </div>
 </body>

@@ -17,12 +17,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $code_postal = $_POST['code_postal'];
     $pays = $_POST['pays'];
     $numero_telephone = $_POST['numero_telephone'];
+
     $stmt = $pdo->prepare("INSERT INTO adresses (utilisateur_id, nom, prenom, adresse_ligne1, adresse_ligne2, ville, code_postal, pays, numero_telephone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->execute([$user_id, $nom, $prenom, $adresse_ligne1, $adresse_ligne2, $ville, $code_postal, $pays, $numero_telephone]);
+
     header('Location: profile.php');
     exit;
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="fr">
