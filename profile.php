@@ -58,53 +58,45 @@ $cards = $stmt->fetchAll();
     </div>
     <div class="section">
         <h2>Mon Profil</h2>
-        <img src="<?php echo $user['photo']; ?>" alt="Photo de Profil" width="150" height="150"><br>
-        <a href="upload_photo.php">Changer de photo</a><br>
-        <strong>Nom :</strong> <?php echo $user['prenom'] . ' ' . $user['nom']; ?><br>
-        <strong>Email :</strong> <?php echo $user['email']; ?><br>
+        <img src="<?php echo htmlspecialchars($user['photo']); ?>" alt="Photo de Profil" width="150" height="150">
+        <p><strong>Nom :</strong> <?php echo htmlspecialchars($user['prenom'] . ' ' . $user['nom']); ?></p>
+        <p><strong>Email :</strong> <?php echo htmlspecialchars($user['email']); ?></p>
 
-        <button id="toggle-addresses">Carnet d'adresses</button>
-
+        <button id="toggle-addresses">Adresses de livraison</button>
         <div id="address-container" style="display: none;">
-            <h3>Carnet d'adresses</h3>
+            <h3>Adresses de livraison</h3>
             <?php foreach ($addresses as $address): ?>
                 <p>
-                    <strong>Nom :</strong> <?php echo $address['nom']; ?><br>
-                    <strong>Prénom :</strong> <?php echo $address['prenom']; ?><br>
-                    <strong>Adresse :</strong> <?php echo $address['adresse_ligne1']; ?><br>
-                    <strong>Adresse Ligne 2 :</strong> <?php echo $address['adresse_ligne2']; ?><br>
-                    <strong>Ville :</strong> <?php echo $address['ville']; ?><br>
-                    <strong>Code Postal :</strong> <?php echo $address['code_postal']; ?><br>
-                    <strong>Pays :</strong> <?php echo $address['pays']; ?><br>
-                    <strong>Numéro de téléphone :</strong> <?php echo $address['numero_telephone']; ?><br>
-                    <a href="edit_address.php?id=<?php echo $address['id']; ?>">Modifier</a>
-                    <a href="delete_address.php?id=<?php echo $address['id']; ?>">Supprimer</a>
+                    <strong>Adresse :</strong> <?php echo htmlspecialchars($address['adresse_ligne1']); ?><br>
+                    <strong>Adresse Ligne 2 :</strong> <?php echo htmlspecialchars($address['adresse_ligne2']); ?><br>
+                    <strong>Ville :</strong> <?php echo htmlspecialchars($address['ville']); ?><br>
+                    <strong>Code Postal :</strong> <?php echo htmlspecialchars($address['code_postal']); ?><br>
+                    <strong>Pays :</strong> <?php echo htmlspecialchars($address['pays']); ?><br>
+                    <strong>Numéro de téléphone :</strong> <?php echo htmlspecialchars($address['numero_telephone']); ?><br>
+                    <a href="edit_address.php?id=<?php echo htmlspecialchars($address['id']); ?>">Modifier</a>
+                    <a href="delete_address.php?id=<?php echo htmlspecialchars($address['id']); ?>">Supprimer</a>
                 </p>
             <?php endforeach; ?>
             <a href="add_address.php">Ajouter une adresse</a>
         </div>
 
         <button id="toggle-payments">Moyens de paiement</button>
-
         <div id="payment-container" style="display: none;">
             <h3>Moyens de paiement</h3>
             <?php foreach ($cards as $card): ?>
                 <p>
-                    <?php echo $card['type_carte']; ?>: **** **** **** <?php echo substr($card['numero_carte'], -4); ?><br>
-                    <a href="delete_card.php?id=<?php echo $card['id']; ?>">Supprimer</a>
+                    <?php echo htmlspecialchars($card['type_carte']); ?>: **** **** **** <?php echo htmlspecialchars(substr($card['numero_carte'], -4)); ?><br>
+                    <a href="delete_card.php?id=<?php echo htmlspecialchars($card['id']); ?>">Supprimer</a>
                 </p>
             <?php endforeach; ?>
             <a href="add_card.php">Ajouter un moyen de paiement</a>
         </div>
 
-        <h3>Mes Commandes</h3>
-        <!-- Code pour afficher les commandes de l'utilisateur -->
-
-        <h3>Ma Wishlist</h3>
-        <!-- Code pour afficher les articles likés -->
-
-        <h3>Personnalisation</h3>
-        <!-- Code pour personnaliser le thème -->
+        <h3>Actions</h3>
+        <ul>
+            <li><a href="mes_commandes.php">Mes Commandes</a></li>
+            <li><a href="logout.php">Se Déconnecter</a></li>
+        </ul>
     </div>
     <footer class="footer">
         <p>Contactez-nous : <a href="mailto:contact@agorafrancia.fr">contact@agorafrancia.fr</a> | Téléphone : <a href="tel:+33123456789">01 23 45 67 89</a></p>
