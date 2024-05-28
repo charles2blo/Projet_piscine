@@ -4,28 +4,83 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agora Francia</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="style.css" rel="stylesheet" type="text/css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="script.js"></script>
 </head>
 <body>
 <div class="wrapper">
     <div class="header">
+        <img src="logo.png" width="100" height="100" alt="logoAgora">
         <h1>Agora Francia</h1>
-        <img src="logo.webp" alt="Logo Agora">
     </div>
     <div class="navigation">
-        <a href="#accueil">Accueil</a>
-        <a href="#toutparcourir">Tout Parcourir</a>
-        <a href="#notifications">Notifications</a>
-        <a href="#panier">Panier</a>
-        <a href="#votrecompte">Votre Compte</a>
+        <a href="#accueil"><i class="fas fa-home"></i> Accueil</a>
+        <a href="#toutparcourir"><i class="fas fa-th-list"></i> Tout Parcourir</a>
+        <a href="#notifications"><i class="fas fa-bell"></i> Notifications</a>
+        <a href="#panier"><i class="fas fa-shopping-cart"></i> Panier</a>
+        <div class="dropdown">
+            <a href="#votrecompte" class="dropbtn"><i class="fas fa-user"></i> Votre Compte</a>
+            <div class="dropdown-content">
+                <a href="#" id="login-btn">Se connecter</a>
+                <a href="#" id="signup-btn">S'inscrire</a>
+            </div>
+        </div>
     </div>
     <div class="section">
         <h2>Bienvenue sur Agora Francia</h2>
         <p>La façon moderne de faire du shopping. Découvrez notre sélection du jour, les meilleures offres, et bien plus encore.</p>
+
+        <h3>Sélection du Jour</h3>
+        <div id="carrousel">
+            <ul>
+                <li><img src="image1.jpg" width="225" height="225" alt="Sélection 1"/></li>
+                <li><img src="image2.jpg" width="225" height="225" alt="Sélection 2"/></li>
+                <li><img src="image3.jpg" width="225" height="225" alt="Sélection 3"/></li>
+                <li><img src="image4.jpg" width="225" height="225" alt="Sélection 4"/></li>
+                <li><img src="image5.jpg" width="225" height="225" alt="Sélection 5"/></li>
+                <li><img src="image6.jpg" width="225" height="225" alt="Sélection 6"/></li>
+                <li><img src="image7.jpg" width="225" height="225" alt="Sélection 7"/></li>
+                <li><img src="image8.jpg" width="225" height="225" alt="Sélection 8"/></li>
+            </ul>
+        </div>
+
+        <div id="bouton">
+            <button class="prev">&#9664;</button>
+            <button class="next">&#9654;</button>
+        </div>
     </div>
-    <div class="footer">
-        <p>Contactez-nous : email@example.com | Téléphone : 01 23 45 67 89</p>
+
+    <div id="auth-forms" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="login-form">
+                <h2>Se connecter</h2>
+                <form>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required><br>
+                    <label for="password">Mot de passe:</label>
+                    <input type="password" id="password" name="password" required><br>
+                    <input type="submit" value="Se connecter">
+                </form>
+            </div>
+            <div id="signup-form" style="display:none;">
+                <h2>S'inscrire</h2>
+                <form>
+                    <label for="new-email">Email:</label>
+                    <input type="email" id="new-email" name="new-email" required><br>
+                    <label for="new-password">Mot de passe:</label>
+                    <input type="password" id="new-password" name="new-password" required><br>
+                    <input type="submit" value="S'inscrire">
+                </form>
+            </div>
+        </div>
     </div>
+
+    <footer class="footer">
+        <p>Contactez-nous : <a href="mailto:contact@agorafrancia.fr">contact@agorafrancia.fr</a> | Téléphone : <a href="tel:+33123456789">01 23 45 67 89</a></p>
+    </footer>
 </div>
 </body>
 </html>
