@@ -9,7 +9,7 @@ body {
     margin: 0 auto;
 }
 .header {
-    background: #f4f4f4;
+    background: #fafafa;
     padding: 20px;
     text-align: center;
     display: flex;
@@ -23,7 +23,7 @@ body {
     margin: 0;
 }
 .navigation {
-    background: #333;
+    background: #000000;
     color: white;
     overflow: hidden;
 }
@@ -43,7 +43,7 @@ body {
     padding: 20px;
 }
 .footer {
-    background: #f4f4f4;
+    background: #000000;
     text-align: center;
     padding: 10px;
     position: absolute;
