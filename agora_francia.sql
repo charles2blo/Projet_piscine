@@ -52,7 +52,7 @@ CREATE TABLE `cartes` (
   `id` int(11) NOT NULL,
   `utilisateur_id` int(11) DEFAULT NULL,
   `type_carte` enum('Visa','MasterCard','AmericanExpress','PayPal') DEFAULT NULL,
-  `numero_carte` varchar(20) DEFAULT NULL,
+  `numero_carte` varchar(16) DEFAULT NULL,
   `nom_carte` varchar(100) DEFAULT NULL,
   `expiration` date DEFAULT NULL,
   `code_securite` varchar(4) DEFAULT NULL
