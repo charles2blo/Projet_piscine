@@ -115,6 +115,9 @@ $cards = $stmt->fetchAll();
         </div>
 
         <h3><a href="mes_commandes.php">Mes Commandes</a></h3>
+
+        <a href="mes-annonces.php">Mes annonces</a>
+
         <h3>Ma Wishlist</h3>
         <!-- Code pour afficher les articles likés -->
         <h3>Personnalisation</h3>
