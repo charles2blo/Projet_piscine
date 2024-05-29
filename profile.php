@@ -48,12 +48,15 @@ $cards = $stmt->fetchAll();
 <div class="wrapper">
     <div class="header">
         <h1>Agora Francia</h1>
-        <img src="logo.png" width="100" height="100" alt="logoAgora">
+        <div class="logo-notification">
+            <a href="notifications.html" class="notification-icon"><i class="fas fa-bell"></i></a>
+            <img src="logo.png" width="100" height="100" alt="logoAgora">
+        </div>
     </div>
     <div class="navigation">
         <a href="index.html"><i class="fas fa-home"></i> Accueil</a>
         <a href="browse.php"><i class="fas fa-th-list"></i> Tout Parcourir</a>
-        <a href="notifications.html"><i class="fas fa-bell"></i> Notifications</a>
+        <a href="chat.php"><i class="fas fa-comments"></i> Chat</a>
         <a href="cart.php"><i class="fas fa-shopping-cart"></i> Panier</a>
         <?php if (isset($_SESSION['user_id'])): ?>
             <a href="publish_article.php">Publier un article</a>
@@ -116,7 +119,7 @@ $cards = $stmt->fetchAll();
 
         <h3><a href="mes_commandes.php">Mes Commandes</a></h3>
 
-        <a href="mes-annonces.php">Mes annonces</a>
+        <h3><a href="mes-annonces.php">Mes annonces</a></h3>
 
         <h3>Ma Wishlist</h3>
         <!-- Code pour afficher les articles likés -->
