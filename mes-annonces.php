@@ -28,6 +28,8 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mes Annonces - Agora Francia</title>
     <link href="style.css" rel="stylesheet" type="text/css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
 <div class="wrapper">
@@ -45,18 +47,14 @@ try {
         <a href="cart.php"><i class="fas fa-shopping-cart"></i> Panier</a>
         <?php if (isset($_SESSION['user_id'])): ?>
             <a href="publish_article.php">Publier un article</a>
-            <a href="mes_annonces.php">Mes annonces</a>
         <?php endif; ?>
         <div class="dropdown">
             <a href="#votrecompte" class="dropbtn"><i class="fas fa-user"></i> Votre Compte</a>
             <div class="dropdown-content">
                 <?php if (isset($_SESSION['user_id'])): ?>
-                    <a href="profile.php">Mon Profil</a>
-                    <a href="logout.php">Se Déconnecter</a>
-                <?php else: ?>
                     <a href="#" id="login-btn">Se connecter</a>
                     <a href="#" id="signup-btn">S'inscrire</a>
-                <?php endif; ?>
+                    <?php endif; ?>
             </div>
         </div>
     </div>
