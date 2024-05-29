@@ -54,6 +54,21 @@ body {
     height: 50px; /* Hauteur fixée pour le footer */
 }
 
+.logo-notification {
+    display: flex;
+    align-items: center;
+}
+
+.notification-icon {
+    margin-left: 10px;
+    font-size: 24px;
+    color: #333;
+}
+
+.notification-icon:hover {
+    color: #000;
+}
+
 #carrousel {
     position: relative;
     height: 225px;
