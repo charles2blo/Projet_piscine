@@ -272,3 +272,96 @@ body {
 .filter-form input[type="submit"]:hover {
     background-color: #45a049;
 }
+
+.articles-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.article {
+    flex: 0 1 calc(20% - 20px);
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+.article img {
+    max-width: 100%;
+    height: auto;
+}
+
+.article-details {
+    margin: 20px;
+    border: 1px solid #ddd;
+    padding: 20px;
+}
+
+.profile-pic {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.article-container {
+    display: flex;
+    align-items: center; /* Centrer verticalement les éléments */
+    justify-content: center; /* Centrer horizontalement si nécessaire */
+    margin: 20px;
+    border: 1px solid #ddd;
+    padding: 20px;
+    background-color: #f9f9f9;
+    position: relative; /* Nécessaire pour le positionnement absolu du bouton de retour */
+}
+
+.article-container img {
+    max-width: 300px;
+    margin-right: 20px;
+    align-self: center; /* Assure que l'image est centrée verticalement */
+}
+
+.article-details {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.article-details p {
+    margin: 0;
+}
+
+.article-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.article-info div {
+    flex: 1 1 50%;
+    box-sizing: border-box;
+}
+
+.article-info div span {
+    font-weight: bold;
+}
+
+.return-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.return-button:hover {
+    background-color: #45a049;
+}
+

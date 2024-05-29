@@ -66,29 +66,32 @@ try {
     </div>
 
     <h2>Détails de l'Article</h2>
-    <div class="article-details">
-        <h3><?php echo htmlspecialchars($article['nom']); ?></h3>
-        <p><?php echo htmlspecialchars($article['description']); ?></p>
-        <p>Catégorie: <?php echo htmlspecialchars($article['categorie']); ?></p>
-        <p>Prix: <?php echo htmlspecialchars($article['prix']); ?> €</p>
-        <p>Quantité: <?php echo htmlspecialchars($article['quantite']); ?></p>
-        <p>Type de vente: <?php echo htmlspecialchars($article['type_vente']); ?></p>
-        <p>État: <?php echo htmlspecialchars($article['etat']); ?></p>
+    <div class="article-container">
+        <a href="browse.php" class="return-button">Retour</a>
         <?php if ($article['photo']): ?>
             <img src="<?php echo htmlspecialchars($article['photo']); ?>" alt="Photo de l'article">
         <?php endif; ?>
-        <div class="vendeur-info">
-            <h4>Vendeur</h4>
-            <p>Nom: <?php echo htmlspecialchars($article['vendeur_prenom'] . ' ' . $article['vendeur_nom']); ?></p>
-            <?php if ($article['vendeur_photo']): ?>
-                <img src="<?php echo htmlspecialchars($article['vendeur_photo']); ?>" alt="Photo de profil" class="profile-pic">
-            <?php endif; ?>
+        <div class="article-details">
+            <h3><?php echo htmlspecialchars($article['nom']); ?></h3>
+            <div class="article-info">
+                <div><span>Catégorie:</span> <?php echo htmlspecialchars($article['categorie']); ?></div>
+                <div><span>Prix:</span> <?php echo htmlspecialchars($article['prix']); ?> €</div>
+                <div><span>Quantité:</span> <?php echo htmlspecialchars($article['quantite']); ?></div>
+                <div><span>Type de vente:</span> <?php echo htmlspecialchars($article['type_vente']); ?></div>
+                <div><span>État:</span> <?php echo htmlspecialchars($article['etat']); ?></div>
+            </div>
+            <div class="vendeur-info">
+                <h4>Vendeur</h4>
+                <p><?php echo htmlspecialchars($article['vendeur_prenom'] . ' ' . $article['vendeur_nom']); ?></p>
+                <?php if ($article['vendeur_photo']): ?>
+                    <img src="<?php echo htmlspecialchars($article['vendeur_photo']); ?>" alt="Photo de profil" class="profile-pic">
+                <?php endif; ?>
+            </div>
+            <form action="add_to_cart.php" method="post">
+                <input type="hidden" name="article_id" value="<?php echo $article['id']; ?>">
+                <input type="submit" value="Ajouter au Panier">
+            </form>
         </div>
-        <form action="add_to_cart.php" method="post">
-            <input type="hidden" name="article_id" value="<?php echo $article['id']; ?>">
-            <input type="submit" value="Ajouter au Panier">
-        </form>
-        <a href="browse.php">Retour</a>
     </div>
 </div>
 </body>
