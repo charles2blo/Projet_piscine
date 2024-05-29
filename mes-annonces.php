@@ -33,12 +33,15 @@ try {
 <div class="wrapper">
     <div class="header">
         <h1>Agora Francia</h1>
-        <img src="logo.png" width="100" height="100" alt="logoAgora">
+        <div class="logo-notification">
+            <a href="notifications.html" class="notification-icon"><i class="fas fa-bell"></i></a>
+            <img src="logo.png" width="100" height="100" alt="logoAgora">
+        </div>
     </div>
     <div class="navigation">
         <a href="index.html"><i class="fas fa-home"></i> Accueil</a>
         <a href="browse.php"><i class="fas fa-th-list"></i> Tout Parcourir</a>
-        <a href="notifications.html"><i class="fas fa-bell"></i> Notifications</a>
+        <a href="chat.php"><i class="fas fa-comments"></i> Chat</a>
         <a href="cart.php"><i class="fas fa-shopping-cart"></i> Panier</a>
         <?php if (isset($_SESSION['user_id'])): ?>
             <a href="publish_article.php">Publier un article</a>
@@ -60,7 +63,7 @@ try {
 
     <div class="section">
         <h2>Mes Annonces</h2>
-        <div class="catalogue">
+        <div class="articles-grid">
             <?php if (count($articles) > 0): ?>
                 <?php foreach ($articles as $article): ?>
                     <div class="article">
@@ -68,10 +71,7 @@ try {
                         <h3><?php echo htmlspecialchars($article['nom']); ?></h3>
                         <p><?php echo htmlspecialchars($article['description']); ?></p>
                         <p><?php echo htmlspecialchars($article['prix']); ?> €</p>
-                        <form action="delete_article.php" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?');">
-                            <input type="hidden" name="article_id" value="<?php echo $article['id']; ?>">
-                            <button type="submit">Supprimer</button>
-                        </form>
+                        <a href="delete_article.php?id=<?php echo $article['id']; ?>" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?');">Supprimer</a>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
