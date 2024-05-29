@@ -32,9 +32,6 @@ try {
     $cartes = $stmt->fetchAll();
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        echo "Form submitted.<br>";
-        print_r($_POST); // Afficher toutes les données POST reçues
-
         $selected_card_id = $_POST['card_id'];
 
         if ($selected_card_id == "new_card") {
@@ -81,8 +78,8 @@ try {
         $stmt = $pdo->prepare("DELETE FROM panier WHERE acheteur_id = ?");
         $stmt->execute([$acheteur_id]);
 
-        // Rediriger vers la page des commandes
-        header('Location: order_success.php');
+        // Rediriger vers la page des commandes avec le numéro de commande
+        header("Location: order_success.php?id=" . $commande_id);
         exit;
     }
 } catch (Exception $e) {
@@ -131,7 +128,7 @@ try {
         <?php if (!empty($cartes)): ?>
             <?php foreach ($cartes as $carte): ?>
                 <div>
-                    <input type="radio" id="carte_<?php echo $carte['id']; ?>" name="card_id" value="<?php echo $carte['id']; ?>" required>
+                    <input type="radio" id="carte_<?php echo $carte['id']; ?>" name="card_id" value="<?php echo $carte['id']; ?>">
                     <label for="carte_<?php echo $carte['id']; ?>"><?php echo htmlspecialchars($carte['type_carte']); ?>: **** **** **** <?php echo htmlspecialchars(substr($carte['numero_carte'], -4)); ?></label>
                 </div>
             <?php endforeach; ?>
@@ -139,25 +136,25 @@ try {
             <p>Aucune carte enregistrée. Veuillez ajouter une nouvelle carte.</p>
         <?php endif; ?>
         <div>
-            <input type="radio" id="new_card" name="card_id" value="new_card" required>
+            <input type="radio" id="new_card" name="card_id" value="new_card">
             <label for="new_card">Ajouter une nouvelle carte</label>
         </div>
         <div id="new_card_details" style="display: none;">
             <label for="type_carte">Type de carte:</label>
-            <select name="type_carte" required>
+            <select name="type_carte" id="type_carte">
                 <option value="Visa">Visa</option>
                 <option value="MasterCard">MasterCard</option>
                 <option value="AmericanExpress">American Express</option>
                 <option value="PayPal">PayPal</option>
             </select><br>
             <label for="numero_carte">Numéro de carte:</label>
-            <input type="text" name="numero_carte" required><br>
+            <input type="text" name="numero_carte" id="numero_carte"><br>
             <label for="nom_carte">Nom sur la carte:</label>
-            <input type="text" name="nom_carte" required><br>
+            <input type="text" name="nom_carte" id="nom_carte"><br>
             <label for="expiration">Date d'expiration:</label>
-            <input type="text" name="expiration" placeholder="MM/YY" required><br>
+            <input type="text" name="expiration" id="expiration" placeholder="MM/YY"><br>
             <label for="code_securite">Code de sécurité:</label>
-            <input type="text" name="code_securite" required><br>
+            <input type="text" name="code_securite" id="code_securite"><br>
         </div>
         <input type="submit" value="Payer">
     </form>
@@ -165,6 +162,23 @@ try {
 <script>
     document.getElementById('new_card').addEventListener('change', function() {
         document.getElementById('new_card_details').style.display = 'block';
+        document.getElementById('type_carte').required = true;
+        document.getElementById('numero_carte').required = true;
+        document.getElementById('nom_carte').required = true;
+        document.getElementById('expiration').required = true;
+        document.getElementById('code_securite').required = true;
+    });
+
+    var existingCards = document.querySelectorAll('input[name="card_id"]:not(#new_card)');
+    existingCards.forEach(function(card) {
+        card.addEventListener('change', function() {
+            document.getElementById('new_card_details').style.display = 'none';
+            document.getElementById('type_carte').required = false;
+            document.getElementById('numero_carte').required = false;
+            document.getElementById('nom_carte').required = false;
+            document.getElementById('expiration').required = false;
+            document.getElementById('code_securite').required = false;
+        });
     });
 </script>
 </body>
