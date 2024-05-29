@@ -1,3 +1,17 @@
+<?php
+session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+if (!isset($_SESSION['user_id'])) {
+    header('Location: index.html');
+    exit;
+}
+
+include 'db_connect.php';
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -14,22 +28,26 @@
 <div class="wrapper">
     <div class="header">
         <h1>Agora Francia</h1>
-        <img src="logo.png" width="100" height="100" alt="logoAgora">
+        <div class="logo-notification">
+            <a href="notifications.html" class="notification-icon"><i class="fas fa-bell"></i></a>
+            <img src="logo.png" width="100" height="100" alt="logoAgora">
+        </div>
     </div>
     <div class="navigation">
         <a href="index.html"><i class="fas fa-home"></i> Accueil</a>
         <a href="browse.php"><i class="fas fa-th-list"></i> Tout Parcourir</a>
-        <a href="notifications.html"><i class="fas fa-bell"></i> Notifications</a>
+        <a href="chat.php"><i class="fas fa-comments"></i> Chat</a>
         <a href="cart.php"><i class="fas fa-shopping-cart"></i> Panier</a>
         <?php if (isset($_SESSION['user_id'])): ?>
-        <a href="publish_article.php">Publier un article</a>
+            <a href="publish_article.php">Publier un article</a>
         <?php endif; ?>
         <div class="dropdown">
             <a href="#votrecompte" class="dropbtn"><i class="fas fa-user"></i> Votre Compte</a>
             <div class="dropdown-content">
                 <?php if (isset($_SESSION['user_id'])): ?>
-                <a href="#" id="login-btn">Se connecter</a>
-                <a href="#" id="signup-btn">S'inscrire</a>
+                    <a href="#" id="login-btn">Se connecter</a>
+                    <a href="#" id="signup-btn">S'inscrire</a>
+                    <?php endif; ?>
             </div>
         </div>
     </div>
