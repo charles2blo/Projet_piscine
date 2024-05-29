@@ -1,5 +1,9 @@
 <?php
 session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 if (!isset($_SESSION['user_id'])) {
     header('Location: index.html');
     exit;
@@ -32,11 +36,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $photo = "";
     }
 
-    $stmt = $conn->prepare("INSERT INTO articles (nom, description, categorie, prix, quantite, type_vente, etat, vendeur_id, photo, video) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$nom, $description, $categorie, $prix, $quantite, $type_vente, $etat, $vendeur_id, $photo, $video]);
+    try {
+        $stmt = $pdo->prepare("INSERT INTO articles (nom, description, categorie, prix, quantite, type_vente, etat, vendeur_id, photo, video) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$nom, $description, $categorie, $prix, $quantite, $type_vente, $etat, $vendeur_id, $photo, $video]);
 
-    header("Location: profile.php");
-    exit();
+        header("Location: profile.php");
+        exit();
+    } catch (PDOException $e) {
+        echo "Erreur lors de la publication de l'article: " . $e->getMessage();
+    }
 }
 ?>
 
