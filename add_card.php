@@ -1,5 +1,9 @@
 <?php
 session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 if (!isset($_SESSION['user_id'])) {
     header('Location: index.html');
     exit;
@@ -12,12 +16,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $type_carte = $_POST['type_carte'];
     $numero_carte = $_POST['numero_carte'];
     $nom_carte = $_POST['nom_carte'];
-    $expiration = $_POST['expiration'];
+    $expiration = $_POST['expiration'] . '-01';  // Ajouter '-01' pour avoir un format valide 'YYYY-MM-DD'
     $code_securite = $_POST['code_securite'];
-    $stmt = $pdo->prepare("INSERT INTO cartes (utilisateur_id, type_carte, numero_carte, nom_carte, expiration, code_securite) VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$user_id, $type_carte, $numero_carte, $nom_carte, $expiration, $code_securite]);
-    header('Location: profile.php');
-    exit;
+
+    try {
+        $stmt = $pdo->prepare("INSERT INTO cartes (utilisateur_id, type_carte, numero_carte, nom_carte, expiration, code_securite) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$user_id, $type_carte, $numero_carte, $nom_carte, $expiration, $code_securite]);
+        header('Location: profile.php');
+        exit;
+    } catch (PDOException $e) {
+        echo 'Erreur: ' . $e->getMessage();
+    }
 }
 ?>
 
@@ -42,13 +51,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <option value="PayPal">PayPal</option>
             </select><br>
             <label for="numero_carte">Numéro de Carte:</label><br>
-            <input type="text" id="numero_carte" name="numero_carte" required><br>
+            <input type="text" id="numero_carte" name="numero_carte" required maxlength="16"><br>
             <label for="nom_carte">Nom sur la Carte:</label><br>
-            <input type="text" id="nom_carte" name="nom_carte" required><br>
+            <input type="text" id="nom_carte" name="nom_carte" required maxlength="100"><br>
             <label for="expiration">Date d'Expiration:</label><br>
             <input type="month" id="expiration" name="expiration" required><br>
             <label for="code_securite">Code de Sécurité:</label><br>
-            <input type="text" id="code_securite" name="code_securite" required><br>
+            <input type="text" id="code_securite" name="code_securite" required maxlength="4"><br>
             <input type="submit" value="Ajouter">
         </form>
     </div>
