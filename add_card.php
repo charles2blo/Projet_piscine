@@ -11,6 +11,8 @@ if (!isset($_SESSION['user_id'])) {
 
 include 'db_connect.php';
 
+$validation_error = '';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_id = $_SESSION['user_id'];
     $type_carte = $_POST['type_carte'];
@@ -19,13 +21,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $expiration = $_POST['expiration'] . '-01';  // Ajouter '-01' pour avoir un format valide 'YYYY-MM-DD'
     $code_securite = $_POST['code_securite'];
 
-    try {
-        $stmt = $pdo->prepare("INSERT INTO cartes (utilisateur_id, type_carte, numero_carte, nom_carte, expiration, code_securite) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$user_id, $type_carte, $numero_carte, $nom_carte, $expiration, $code_securite]);
-        header('Location: profile.php');
-        exit;
-    } catch (PDOException $e) {
-        echo 'Erreur: ' . $e->getMessage();
+    // Validation côté serveur
+    if (!preg_match('/^\d{16}$/', $numero_carte)) {
+        $validation_error = "Le numéro de carte doit contenir exactement 16 chiffres.";
+    } else {
+        try {
+            $stmt = $pdo->prepare("INSERT INTO cartes (utilisateur_id, type_carte, numero_carte, nom_carte, expiration, code_securite) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$user_id, $type_carte, $numero_carte, $nom_carte, $expiration, $code_securite]);
+            header('Location: profile.php');
+            exit;
+        } catch (PDOException $e) {
+            echo 'Erreur: ' . $e->getMessage();
+        }
     }
 }
 ?>
@@ -37,12 +44,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ajouter un Moyen de Paiement - Agora Francia</title>
     <link href="style.css" rel="stylesheet" type="text/css" />
+    <script>
+        function validateCardNumber() {
+            var cardNumber = document.getElementById("numero_carte").value;
+            if (cardNumber.length !== 16 || !/^\d{16}$/.test(cardNumber)) {
+                alert("Le numéro de carte doit contenir exactement 16 chiffres.");
+                return false;
+            }
+            return true;
+        }
+    </script>
 </head>
 <body>
 <div class="wrapper">
     <div class="section">
         <h2>Ajouter un Moyen de Paiement</h2>
-        <form action="add_card.php" method="post">
+        <?php if ($validation_error): ?>
+            <p style="color: red;"><?php echo $validation_error; ?></p>
+        <?php endif; ?>
+        <form action="add_card.php" method="post" onsubmit="return validateCardNumber()">
             <label for="type_carte">Type de Carte:</label><br>
             <select id="type_carte" name="type_carte" required>
                 <option value="Visa">Visa</option>
