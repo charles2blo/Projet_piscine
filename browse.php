@@ -3,7 +3,7 @@ session_start();
 include 'db_connect.php';
 
 try {
-    $stmt = $pdo->query("SELECT * FROM articles");
+    $stmt = $pdo->query("SELECT * FROM articles WHERE quantite > 0");
     $articles = $stmt->fetchAll();
 } catch (PDOException $e) {
     echo "Erreur: " . $e->getMessage();
@@ -20,17 +20,6 @@ try {
     <script src="script.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- <style>
-        .article {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin: 10px;
-        }
-
-        .article h3 {
-            margin: 0 0 10px;
-        }
-    </style> -->
 </head>
 <body>
 <div class="wrapper">
@@ -73,6 +62,8 @@ try {
                 <?php endif; ?>
                 <form action="add_to_cart.php" method="post">
                     <input type="hidden" name="article_id" value="<?php echo $article['id']; ?>">
+                    <label for="quantite">Quantité :</label>
+                    <input type="number" name="quantite" min="1" max="<?php echo $article['quantite']; ?>" required>
                     <input type="submit" value="Ajouter au Panier">
                 </form>
             </div>

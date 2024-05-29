@@ -64,8 +64,39 @@ $cartes = $stmt->fetchAll();
             max-width: 100px;
         }
     </style>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
+
 <body>
+<div class="wrapper">
+    <div class="header">
+        <h1>Agora Francia</h1>
+        <img src="logo.png" width="100" height="100" alt="logoAgora">
+    </div>
+    <div class="navigation">
+        <a href="index.html"><i class="fas fa-home"></i> Accueil</a>
+        <a href="browse.php"><i class="fas fa-th-list"></i> Tout Parcourir</a>
+        <a href="notifications.html"><i class="fas fa-bell"></i> Notifications</a>
+        <a href="cart.php"><i class="fas fa-shopping-cart"></i> Panier</a>
+        <?php if (isset($_SESSION['user_id'])): ?>
+            <a href="publish_article.php">Publier un article</a>
+        <?php endif; ?>
+        <div class="dropdown">
+            <a href="#votrecompte" class="dropbtn"><i class="fas fa-user"></i> Votre Compte</a>
+            <div class="dropdown-content">
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <a href="profile.php">Mon Profil</a>
+                    <a href="logout.php">Se Déconnecter</a>
+                <?php else: ?>
+                    <a href="#" id="login-btn">Se connecter</a>
+                    <a href="#" id="signup-btn">S'inscrire</a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
 <h1>Détails de la Commande #<?php echo htmlspecialchars($commande['id'] ?? ''); ?></h1>
 <div class="commande-details">
     <p>Date: <?php echo htmlspecialchars($commande['date_commande'] ?? ''); ?></p>

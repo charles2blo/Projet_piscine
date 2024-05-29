@@ -32,26 +32,43 @@ if ($commandes) {
 
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Mes Commandes</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .commandes {
-            margin: 20px;
-        }
-        .commande {
-            border: 1px solid #ccc;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-    </style>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
+
 <body>
-<h1>Mes Commandes</h1>
+<div class="wrapper">
+<div class="header">
+    <h1>Agora Francia</h1>
+    <img src="logo.png" width="100" height="100" alt="logoAgora">
+</div>
+<div class="navigation">
+    <a href="index.html"><i class="fas fa-home"></i> Accueil</a>
+    <a href="browse.php"><i class="fas fa-th-list"></i> Tout Parcourir</a>
+    <a href="notifications.html"><i class="fas fa-bell"></i> Notifications</a>
+    <a href="cart.php"><i class="fas fa-shopping-cart"></i> Panier</a>
+    <?php if (isset($_SESSION['user_id'])): ?>
+        <a href="publish_article.php">Publier un article</a>
+    <?php endif; ?>
+    <div class="dropdown">
+        <a href="#votrecompte" class="dropbtn"><i class="fas fa-user"></i> Votre Compte</a>
+        <div class="dropdown-content">
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <a href="profile.php">Mon Profil</a>
+                <a href="logout.php">Se Déconnecter</a>
+            <?php else: ?>
+                <a href="#" id="login-btn">Se connecter</a>
+                <a href="#" id="signup-btn">S'inscrire</a>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
 <div class="commandes">
     <?php if ($commandes): ?>
         <?php foreach ($commandes as $commande): ?>
@@ -65,6 +82,7 @@ if ($commandes) {
     <?php else: ?>
         <p>Aucune commande en cours.</p>
     <?php endif; ?>
+</div>
 </div>
 </body>
 </html>
