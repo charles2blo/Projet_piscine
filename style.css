@@ -243,3 +243,32 @@ body {
 .article h3 {
     margin-top: 0;
 }
+.filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filter-form label {
+    margin-right: 5px;
+}
+
+.filter-form input, .filter-form select {
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+.filter-form input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+.filter-form input[type="submit"]:hover {
+    background-color: #45a049;
+}

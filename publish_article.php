@@ -61,13 +61,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <div class="wrapper">
     <div class="header">
         <h1>Agora Francia</h1>
-        <img src="logo.png" width="100" height="100" alt="logoAgora">
+        <div class="logo-notification">
+            <a href="notifications.html" class="notification-icon"><i class="fas fa-bell"></i></a>
+            <img src="logo.png" width="100" height="100" alt="logoAgora">
+        </div>
     </div>
     <div class="navigation">
-        <a href="#accueil"><i class="fas fa-home"></i> Accueil</a>
-        <a href="#toutparcourir"><i class="fas fa-th-list"></i> Tout Parcourir</a>
-        <a href="#notifications"><i class="fas fa-bell"></i> Notifications</a>
-        <a href="#panier"><i class="fas fa-shopping-cart"></i> Panier</a>
+    <a href="index.html"><i class="fas fa-home"></i> Accueil</a>
+        <a href="browse.php"><i class="fas fa-th-list"></i> Tout Parcourir</a>
+        <a href="chat.php"><i class="fas fa-comments"></i> Chat</a>
+        <a href="cart.php"><i class="fas fa-shopping-cart"></i> Panier</a>
         <?php if (isset($_SESSION['user_id'])): ?>
             <a href="publish_article.php">Publier un article</a>
         <?php endif; ?>
@@ -110,9 +113,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </select><br>
             <label for="etat">État:</label><br>
             <select id="etat" name="etat" required>
-                <option value="neuf">Neuf</option>
-                <option value="occasion">Occasion</option>
-                <option value="defectueux">Défectueux</option>
+                <option value="neuf avec etiquette">Neuf avec etiquette</option>
+                <option value="neuf sans etiquette">Neuf sans etiquette</option>
+                <option value="tres bon etat">Très bon état</option>
+                <option value="bon etat">Bon état</option>
+                <option value="satisfaisant">Satisfaisant</option>
             </select><br>
             <label for="photo">Photo:</label><br>
             <input type="file" id="photo" name="photo" required><br>
