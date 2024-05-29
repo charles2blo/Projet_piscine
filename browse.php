@@ -70,12 +70,15 @@ try {
 <div class="wrapper">
     <div class="header">
         <h1>Agora Francia</h1>
-        <img src="logo.png" width="100" height="100" alt="logoAgora">
+        <div class="logo-notification">
+            <a href="notifications.html" class="notification-icon"><i class="fas fa-bell"></i></a>
+            <img src="logo.png" width="100" height="100" alt="logoAgora">
+        </div>
     </div>
     <div class="navigation">
         <a href="index.html"><i class="fas fa-home"></i> Accueil</a>
         <a href="browse.php"><i class="fas fa-th-list"></i> Tout Parcourir</a>
-        <a href="notifications.html"><i class="fas fa-bell"></i> Notifications</a>
+        <a href="chat.php"><i class="fas fa-comments"></i> Chat</a>
         <a href="cart.php"><i class="fas fa-shopping-cart"></i> Panier</a>
         <?php if (isset($_SESSION['user_id'])): ?>
             <a href="publish_article.php">Publier un article</a>
@@ -94,6 +97,7 @@ try {
         </div>
     </div>
 
+    <div class="section">
     <h1>Articles Disponibles</h1>
 
     <!-- Formulaire de filtre -->
@@ -134,8 +138,20 @@ try {
                 <?php if ($article['photo']): ?>
                     <a href="article_details.php?id=<?php echo $article['id']; ?>"><img src="<?php echo htmlspecialchars($article['photo']); ?>" alt="Photo de l'article"></a>
                 <?php endif; ?>
+
+                <?php if ($article['type_vente'] == 'negociation'): ?>
+                        <a href="message.php?vendeur_id=<?php echo $article['vendeur_id']; ?>&article_id=<?php echo $article['id']; ?>">Faire une offre</a>
+                        <?php else: ?>
+                        <form action="add_to_cart.php" method="post">
+                        <input type="hidden" name="article_id" value="<?php echo $article['id']; ?>">
+                        <input type="number" name="quantity" value="1" min="1" max="<?php echo htmlspecialchars($article['quantite']); ?>">
+                        <input type="submit" value="Ajouter au Panier">
+                        </form>
+                <?php endif; ?>
+
             </div>
         <?php endforeach; ?>
+    </div>
     </div>
     <footer class="footer">
         <p>
@@ -145,3 +161,28 @@ try {
 </div>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
