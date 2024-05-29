@@ -8,10 +8,12 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $acheteur_id = $_SESSION['user_id'];
+$promo_code = isset($_POST['promo_code']) ? $_POST['promo_code'] : '';
+$discount = 0;
 
 try {
     // Récupérez les articles dans le panier
-    $stmt = $pdo->prepare("SELECT p.id, p.quantite, a.nom, a.prix, a.photo FROM panier p JOIN articles a ON p.article_id = a.id WHERE p.acheteur_id = ?");
+    $stmt = $pdo->prepare("SELECT p.id, p.quantite, a.nom, a.prix, a.photo, a.quantite AS stock_quantite FROM panier p JOIN articles a ON p.article_id = a.id WHERE p.acheteur_id = ?");
     $stmt->execute([$acheteur_id]);
     $panier = $stmt->fetchAll();
 
@@ -19,6 +21,12 @@ try {
     $total = 0;
     foreach ($panier as $article) {
         $total += $article['prix'] * $article['quantite'];
+    }
+
+    // Appliquer la promotion si le code est correct
+    if ($promo_code == 'MANOLO') {
+        $discount = 0.1 * $total;
+        $total -= $discount;
     }
 } catch (PDOException $e) {
     echo "Erreur: " . $e->getMessage();
@@ -31,22 +39,6 @@ try {
 <head>
     <meta charset="UTF-8">
     <title>Panier</title>
-    <style>
-        .panier {
-            margin: 20px;
-        }
-        .article {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin: 10px;
-        }
-        .article img {
-            max-width: 100px;
-        }
-        .article h3 {
-            margin: 0 0 10px;
-        }
-    </style>
     <link href="style.css" rel="stylesheet" type="text/css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="script.js"></script>
@@ -90,25 +82,30 @@ try {
                     <?php if ($article['photo']): ?>
                         <img src="<?php echo htmlspecialchars($article['photo']); ?>" alt="Photo de l'article">
                     <?php endif; ?>
-                    <form action="update_cart.php" method="post">
-                        <input type="hidden" name="panier_id" value="<?php echo $article['id']; ?>">
-                        <input type="number" name="quantite" value="<?php echo $article['quantite']; ?>" min="1">
-                        <input type="submit" value="Modifier">
-                    </form>
                     <form action="remove_from_cart.php" method="post">
                         <input type="hidden" name="panier_id" value="<?php echo $article['id']; ?>">
                         <input type="submit" value="Retirer du Panier">
                     </form>
+                    <form action="update_cart_quantity.php" method="post">
+                        <input type="hidden" name="panier_id" value="<?php echo $article['id']; ?>">
+                        <input type="number" name="quantity" value="<?php echo $article['quantite']; ?>" min="1" max="<?php echo $article['stock_quantite']; ?>">
+                        <input type="submit" value="Modifier la Quantité">
+                    </form>
                 </div>
             <?php endforeach; ?>
-            <h3>Total: <?php echo $total; ?> €</h3>
+            <h3>Total: <?php echo number_format($total, 2); ?> €</h3>
+            <?php if ($discount > 0): ?>
+                <p>Promotion appliquée: -<?php echo number_format($discount, 2); ?> €</p>
+            <?php endif; ?>
+            <form action="cart.php" method="post">
+                <label for="promo_code">Code Promotion:</label>
+                <input type="text" id="promo_code" name="promo_code" value="<?php echo htmlspecialchars($promo_code); ?>">
+                <input type="submit" value="Appliquer">
+            </form>
             <a href="checkout.php">Procéder au paiement</a>
         <?php else: ?>
             <p>Votre panier est vide.</p>
         <?php endif; ?>
-        <footer class="footer">
-        <p>Contactez-nous : <a href="mailto:contact@agorafrancia.fr">contact@agorafrancia.fr</a> | Téléphone : <a href="tel:+33123456789">01 23 45 67 89</a> | <a href="https://www.google.fr/maps/place/37+Quai+de+Grenelle,+75015+Paris/@48.8515004,2.2846575,17z/data=!3m1!4b1!4m6!3m5!1s0x47e6700497ee3ec5:0xdd60f514adcdb346!8m2!3d48.8515004!4d2.2872324!16s%2Fg%2F11bw3y1mf8?entry=ttu" target="_blank"><i class="fas fa-map-marker-alt"></i> bureaux</a></p>
-    </footer>
     </div>
 </body>
 </html>
