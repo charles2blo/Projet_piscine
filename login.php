@@ -1,6 +1,6 @@
 <?php
-include 'db_connect.php';
 session_start();
+include 'db_connect.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
@@ -12,12 +12,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($user && password_verify($password, $user['mot_de_passe'])) {
         $_SESSION['user_id'] = $user['id'];
-        $_SESSION['user_name'] = $user['prenom'] . ' ' . $user['nom'];
-        $_SESSION['user_role'] = $user['type_utilisateur'];
-        header('Location: profile.php'); // Redirection vers la page de profil
-        exit;
+        header('Location: profile.php');
+        exit();
     } else {
-        echo "Email ou mot de passe incorrect.";
+        $_SESSION['login_error'] = "Email ou Mot de passe incorrect";
+        header('Location: index.html');
+        exit();
     }
 }
 ?>
