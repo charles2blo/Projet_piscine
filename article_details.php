@@ -89,6 +89,12 @@ try {
             </div>
             <form action="add_to_cart.php" method="post">
                 <input type="hidden" name="article_id" value="<?php echo $article['id']; ?>">
+                <label for="quantity">Quantité:</label>
+                <select name="quantity" id="quantity">
+                    <?php for ($i = 1; $i <= $article['quantite']; $i++): ?>
+                        <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                    <?php endfor; ?>
+                </select>
                 <input type="submit" value="Ajouter au Panier">
             </form>
         </div>

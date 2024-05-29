@@ -365,3 +365,41 @@ body {
     background-color: #45a049;
 }
 
+.panier {
+    margin: 20px;
+}
+
+.article-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+.article-photo {
+    max-width: 150px;
+    margin-right: 20px;
+}
+
+.article-details {
+    flex-grow: 1;
+}
+
+.article-details h3 {
+    margin: 0 0 10px;
+}
+
+.article-details p {
+    margin: 5px 0;
+}
+
+.article-details form {
+    margin: 10px 0;
+}
+
+.article-details form input[type="submit"] {
+    margin-top: 5px;
+}
+

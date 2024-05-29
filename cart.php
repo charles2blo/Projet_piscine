@@ -41,7 +41,6 @@ try {
     <title>Panier</title>
     <link href="style.css" rel="stylesheet" type="text/css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="script.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
@@ -74,26 +73,29 @@ try {
             </div>
         </div>
     </div>
+
     <h2>Votre Panier</h2>
     <div class="panier">
         <?php if ($panier): ?>
             <?php foreach ($panier as $article): ?>
-                <div class="article">
-                    <h3><?php echo htmlspecialchars($article['nom']); ?></h3>
-                    <p>Prix: <?php echo htmlspecialchars($article['prix']); ?> €</p>
-                    <p>Quantité: <?php echo htmlspecialchars($article['quantite']); ?></p>
+                <div class="article-container">
                     <?php if ($article['photo']): ?>
-                        <img src="<?php echo htmlspecialchars($article['photo']); ?>" alt="Photo de l'article">
+                        <img src="<?php echo htmlspecialchars($article['photo']); ?>" alt="Photo de l'article" class="article-photo">
                     <?php endif; ?>
-                    <form action="remove_from_cart.php" method="post">
-                        <input type="hidden" name="panier_id" value="<?php echo $article['id']; ?>">
-                        <input type="submit" value="Retirer du Panier">
-                    </form>
-                    <form action="update_cart_quantity.php" method="post">
-                        <input type="hidden" name="panier_id" value="<?php echo $article['id']; ?>">
-                        <input type="number" name="quantity" value="<?php echo $article['quantite']; ?>" min="1" max="<?php echo $article['stock_quantite']; ?>">
-                        <input type="submit" value="Modifier la Quantité">
-                    </form>
+                    <div class="article-details">
+                        <h3><?php echo htmlspecialchars($article['nom']); ?></h3>
+                        <p>Prix: <?php echo htmlspecialchars($article['prix']); ?> €</p>
+                        <p>Quantité: <?php echo htmlspecialchars($article['quantite']); ?></p>
+                        <form action="remove_from_cart.php" method="post">
+                            <input type="hidden" name="panier_id" value="<?php echo $article['id']; ?>">
+                            <input type="submit" value="Retirer du Panier">
+                        </form>
+                        <form action="update_cart_quantity.php" method="post">
+                            <input type="hidden" name="panier_id" value="<?php echo $article['id']; ?>">
+                            <input type="number" name="quantity" value="<?php echo $article['quantite']; ?>" min="1" max="<?php echo $article['stock_quantite']; ?>">
+                            <input type="submit" value="Modifier la Quantité">
+                        </form>
+                    </div>
                 </div>
             <?php endforeach; ?>
             <h3>Total: <?php echo number_format($total, 2); ?> €</h3>
