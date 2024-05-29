@@ -3,7 +3,7 @@ session_start();
 include 'db_connect.php';
 
 try {
-    $stmt = $pdo->query("SELECT * FROM articles");
+    $stmt = $pdo->query("SELECT * FROM articles WHERE quantite > 0");
     $articles = $stmt->fetchAll();
 } catch (PDOException $e) {
     echo "Erreur: " . $e->getMessage();
@@ -20,17 +20,21 @@ try {
     <script src="script.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 </head>
 <body>
 <div class="wrapper">
     <div class="header">
         <h1>Agora Francia</h1>
-        <img src="logo.png" width="100" height="100" alt="logoAgora">
+        <div class="logo-notification">
+            <a href="notifications.html" class="notification-icon"><i class="fas fa-bell"></i></a>
+            <img src="logo.png" width="100" height="100" alt="logoAgora">
+        </div>
     </div>
     <div class="navigation">
         <a href="index.html"><i class="fas fa-home"></i> Accueil</a>
         <a href="browse.php"><i class="fas fa-th-list"></i> Tout Parcourir</a>
-        <a href="notifications.html"><i class="fas fa-bell"></i> Notifications</a>
+        <a href="chat.php"><i class="fas fa-comments"></i> Chat</a>
         <a href="cart.php"><i class="fas fa-shopping-cart"></i> Panier</a>
         <?php if (isset($_SESSION['user_id'])): ?>
             <a href="publish_article.php">Publier un article</a>
@@ -62,8 +66,7 @@ try {
                 <?php endif; ?>
                 <form action="add_to_cart.php" method="post">
                     <input type="hidden" name="article_id" value="<?php echo $article['id']; ?>">
-                    <label for="quantity">Quantité:</label>
-                    <input type="number" name="quantity" min="1" value="1">
+                    <input type="number" name="quantity" value="1" min="1" max="<?php echo htmlspecialchars($article['quantite']); ?>">
                     <input type="submit" value="Ajouter au Panier">
                 </form>
             </div>
