@@ -51,10 +51,10 @@ $cards = $stmt->fetchAll();
         <img src="logo.png" width="100" height="100" alt="logoAgora">
     </div>
     <div class="navigation">
-        <a href="#accueil"><i class="fas fa-home"></i> Accueil</a>
-        <a href="#toutparcourir"><i class="fas fa-th-list"></i> Tout Parcourir</a>
-        <a href="#notifications"><i class="fas fa-bell"></i> Notifications</a>
-        <a href="#panier"><i class="fas fa-shopping-cart"></i> Panier</a>
+        <a href="index.html"><i class="fas fa-home"></i> Accueil</a>
+        <a href="browse.php"><i class="fas fa-th-list"></i> Tout Parcourir</a>
+        <a href="notifications.html"><i class="fas fa-bell"></i> Notifications</a>
+        <a href="cart.php"><i class="fas fa-shopping-cart"></i> Panier</a>
         <?php if (isset($_SESSION['user_id'])): ?>
             <a href="publish_article.php">Publier un article</a>
         <?php endif; ?>

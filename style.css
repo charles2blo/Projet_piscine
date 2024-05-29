@@ -204,3 +204,7 @@ body {
 #toggle-addresses:hover, #toggle-payments:hover, #toggle-orders:hover, #toggle-logout:hover {
     background-color: #45a049;
 }
+
+.article img {
+    max-width: 100%;
+}

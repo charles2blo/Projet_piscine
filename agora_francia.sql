@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : mer. 29 mai 2024 à 12:04
+-- Généré le : mar. 28 mai 2024 à 15:07
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -20,33 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Base de données : `agora_francia`
 --
-
--- --------------------------------------------------------
-
---
--- Structure de la table `adresses`
---
-
-CREATE TABLE `adresses` (
-  `id` int(11) NOT NULL,
-  `utilisateur_id` int(11) NOT NULL,
-  `nom` varchar(50) NOT NULL,
-  `prenom` varchar(50) NOT NULL,
-  `adresse_ligne1` varchar(255) NOT NULL,
-  `adresse_ligne2` varchar(255) DEFAULT NULL,
-  `ville` varchar(50) NOT NULL,
-  `code_postal` varchar(20) NOT NULL,
-  `pays` varchar(50) NOT NULL,
-  `numero_telephone` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Déchargement des données de la table `adresses`
---
-
-INSERT INTO `adresses` (`id`, `utilisateur_id`, `nom`, `prenom`, `adresse_ligne1`, `adresse_ligne2`, `ville`, `code_postal`, `pays`, `numero_telephone`) VALUES
-(1, 3, '', '', '', NULL, '', '', '', ''),
-(6, 1, 'Schwartz', 'Oscar', '33 avenue de la résistance', '', 'Chaville', '92370', 'France', '0789311759');
 
 -- --------------------------------------------------------
 
@@ -69,16 +42,6 @@ CREATE TABLE `articles` (
   `video` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Déchargement des données de la table `articles`
---
-
-INSERT INTO `articles` (`id`, `nom`, `description`, `categorie`, `prix`, `quantite`, `vendeur_id`, `date_ajout`, `type_vente`, `etat`, `photo`, `video`) VALUES
-(1, 'Oscar', 'caca', 'meubles', 123.00, 2, 1, '2024-05-28 22:09:46', 'immediate', 'neuf', 'uploads/photo.jpg', ''),
-(2, 'caca', 'bien coulante', 'accessoire_vip', 200.00, 100, 1, '2024-05-28 22:13:19', 'immediate', 'neuf', 'uploads/photo.jpg', ''),
-(3, 'Oscar', 'caca', 'meubles', 23.00, 2, 1, '2024-05-29 09:10:34', 'immediate', 'neuf', 'uploads/photo.jpg', ''),
-(4, 'Charles', 'pipi', 'objets_art', 10.00, 10, 1, '2024-05-29 09:21:47', 'negociation', 'neuf', 'uploads/IMG_0061.jpg', '');
-
 -- --------------------------------------------------------
 
 --
@@ -94,14 +57,6 @@ CREATE TABLE `cartes` (
   `expiration` date DEFAULT NULL,
   `code_securite` varchar(4) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Déchargement des données de la table `cartes`
---
-
-INSERT INTO `cartes` (`id`, `utilisateur_id`, `type_carte`, `numero_carte`, `nom_carte`, `expiration`, `code_securite`) VALUES
-(1, 3, 'Visa', '4492039512344321', 'De Blauwe', '0000-00-00', '017'),
-(8, 1, 'Visa', '0397449277551832', 'Schwartz', '0000-00-00', '017');
 
 -- --------------------------------------------------------
 
@@ -119,41 +74,6 @@ CREATE TABLE `commandes` (
   `date_commande` timestamp NOT NULL DEFAULT current_timestamp(),
   `status` enum('en attente','expédiée','livrée','annulée') DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Déchargement des données de la table `commandes`
---
-
-INSERT INTO `commandes` (`id`, `acheteur_id`, `article_id`, `quantite`, `prix_total`, `adresse_livraison`, `date_commande`, `status`) VALUES
-(1, 1, NULL, NULL, 123.00, NULL, '2024-05-29 09:45:36', 'en attente'),
-(2, 1, NULL, NULL, 123.00, NULL, '2024-05-29 09:46:15', 'en attente'),
-(3, 1, NULL, NULL, 123.00, NULL, '2024-05-29 09:47:00', 'en attente'),
-(4, 1, NULL, NULL, 123.00, NULL, '2024-05-29 09:55:30', 'en attente'),
-(5, 1, NULL, NULL, 123.00, NULL, '2024-05-29 09:57:18', 'en attente'),
-(6, 1, NULL, NULL, 123.00, NULL, '2024-05-29 09:57:27', 'en attente'),
-(7, 1, NULL, NULL, 23.00, NULL, '2024-05-29 09:58:56', 'en attente');
-
--- --------------------------------------------------------
-
---
--- Structure de la table `commandes_articles`
---
-
-CREATE TABLE `commandes_articles` (
-  `id` int(11) NOT NULL,
-  `commande_id` int(11) NOT NULL,
-  `article_id` int(11) NOT NULL,
-  `quantite` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Déchargement des données de la table `commandes_articles`
---
-
-INSERT INTO `commandes_articles` (`id`, `commande_id`, `article_id`, `quantite`) VALUES
-(2, 5, 1, 1),
-(3, 6, 1, 1),
-(4, 7, 3, 1);
 
 -- --------------------------------------------------------
 
@@ -215,67 +135,6 @@ CREATE TABLE `panier` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `ras1`
---
-
-CREATE TABLE `ras1` (
-  `id` int(11) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `role` enum('admin','vendor','buyer') NOT NULL,
-  `first_name` varchar(255) DEFAULT NULL,
-  `last_name` varchar(255) DEFAULT NULL,
-  `address` text DEFAULT NULL,
-  `phone` varchar(50) DEFAULT NULL,
-  `payment_method` enum('visa','mastercard','amex','paypal') DEFAULT NULL,
-  `card_number` varchar(20) DEFAULT NULL,
-  `card_name` varchar(255) DEFAULT NULL,
-  `card_expiry` date DEFAULT NULL,
-  `card_cvv` varchar(4) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `ras2`
---
-
-CREATE TABLE `ras2` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `description` text DEFAULT NULL,
-  `price` decimal(10,2) NOT NULL,
-  `category_id` int(11) DEFAULT NULL,
-  `vendor_id` int(11) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `ras3`
---
-
-CREATE TABLE `ras3` (
-  `id` int(11) NOT NULL,
-  `item_id` int(11) DEFAULT NULL,
-  `photo_url` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `ras4`
---
-
-CREATE TABLE `ras4` (
-  `id` int(11) NOT NULL,
-  `name` enum('Meubles et objets d’art','Accessoire VIP','Matériels scolaires') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Structure de la table `transactions`
 --
 
@@ -311,24 +170,27 @@ CREATE TABLE `utilisateurs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Déchargement des données de la table `utilisateurs`
+-- Contraintes pour la table `adresses`
 --
 
-INSERT INTO `utilisateurs` (`id`, `nom`, `prenom`, `email`, `mot_de_passe`, `adresse`, `ville`, `code_postal`, `pays`, `type_utilisateur`, `photo`, `image_fond`) VALUES
-(1, 'Oscar', 'Schwartz', 'oscar.schwartz@edu.ece.fr', '$2y$10$8LYHsiW8GCM8bpJgQigL6.nKj2OTgHvPcgWydpkj29wttrvwtZl3S', NULL, NULL, NULL, NULL, 'acheteur', 'uploads/bambino.jpg', NULL),
-(3, 'Charles', 'De Blauwe', 'charles.deblauwe@edu.ece.fr', '$2y$10$jjY1oWhw/FtFAhM6YEdihOBvXoLarb8DAnKVThu4H.ZBpnNS.0F8u', NULL, NULL, NULL, NULL, 'acheteur', NULL, NULL),
-(4, 'Oscar', 'Schwartz', 'oscar.schwartz92@gmail.com', '$2y$10$NEoDbZ0gxbx20uKJeh0dkOYshLdP.u16x1hGJNh2vRDeBO56mIMGG', NULL, NULL, NULL, NULL, 'acheteur', NULL, NULL);
+CREATE TABLE adresses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    utilisateur_id INT NOT NULL,
+    nom VARCHAR(50) NOT NULL,
+    prenom VARCHAR(50) NOT NULL,
+    adresse_ligne1 VARCHAR(255) NOT NULL,
+    adresse_ligne2 VARCHAR(255) DEFAULT NULL,
+    ville VARCHAR(50) NOT NULL,
+    code_postal VARCHAR(20) NOT NULL,
+    pays VARCHAR(50) NOT NULL,
+    numero_telephone VARCHAR(20) NOT NULL;
+    FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id)
+);
+
 
 --
 -- Index pour les tables déchargées
 --
-
---
--- Index pour la table `adresses`
---
-ALTER TABLE `adresses`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `utilisateur_id` (`utilisateur_id`);
 
 --
 -- Index pour la table `articles`
@@ -350,14 +212,6 @@ ALTER TABLE `cartes`
 ALTER TABLE `commandes`
   ADD PRIMARY KEY (`id`),
   ADD KEY `acheteur_id` (`acheteur_id`),
-  ADD KEY `article_id` (`article_id`);
-
---
--- Index pour la table `commandes_articles`
---
-ALTER TABLE `commandes_articles`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `commande_id` (`commande_id`),
   ADD KEY `article_id` (`article_id`);
 
 --
@@ -440,34 +294,22 @@ ALTER TABLE `utilisateurs`
 --
 
 --
--- AUTO_INCREMENT pour la table `adresses`
---
-ALTER TABLE `adresses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
 -- AUTO_INCREMENT pour la table `articles`
 --
 ALTER TABLE `articles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT pour la table `cartes`
 --
 ALTER TABLE `cartes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT pour la table `commandes`
 --
 ALTER TABLE `commandes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
---
--- AUTO_INCREMENT pour la table `commandes_articles`
---
-ALTER TABLE `commandes_articles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT pour la table `encheres`
@@ -491,7 +333,7 @@ ALTER TABLE `notifications`
 -- AUTO_INCREMENT pour la table `panier`
 --
 ALTER TABLE `panier`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT pour la table `ras1`
@@ -527,17 +369,11 @@ ALTER TABLE `transactions`
 -- AUTO_INCREMENT pour la table `utilisateurs`
 --
 ALTER TABLE `utilisateurs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Contraintes pour les tables déchargées
 --
-
---
--- Contraintes pour la table `adresses`
---
-ALTER TABLE `adresses`
-  ADD CONSTRAINT `adresses_ibfk_1` FOREIGN KEY (`utilisateur_id`) REFERENCES `utilisateurs` (`id`);
 
 --
 -- Contraintes pour la table `articles`
@@ -557,13 +393,6 @@ ALTER TABLE `cartes`
 ALTER TABLE `commandes`
   ADD CONSTRAINT `commandes_ibfk_1` FOREIGN KEY (`acheteur_id`) REFERENCES `utilisateurs` (`id`),
   ADD CONSTRAINT `commandes_ibfk_2` FOREIGN KEY (`article_id`) REFERENCES `articles` (`id`);
-
---
--- Contraintes pour la table `commandes_articles`
---
-ALTER TABLE `commandes_articles`
-  ADD CONSTRAINT `commandes_articles_ibfk_1` FOREIGN KEY (`commande_id`) REFERENCES `commandes` (`id`),
-  ADD CONSTRAINT `commandes_articles_ibfk_2` FOREIGN KEY (`article_id`) REFERENCES `articles` (`id`);
 
 --
 -- Contraintes pour la table `encheres`
@@ -613,6 +442,8 @@ ALTER TABLE `transactions`
   ADD CONSTRAINT `transactions_ibfk_1` FOREIGN KEY (`acheteur_id`) REFERENCES `utilisateurs` (`id`),
   ADD CONSTRAINT `transactions_ibfk_2` FOREIGN KEY (`article_id`) REFERENCES `articles` (`id`);
 COMMIT;
+
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

@@ -57,13 +57,9 @@ if ($commandes) {
         <?php foreach ($commandes as $commande): ?>
             <div class="commande">
                 <h2>Commande #<?php echo htmlspecialchars($commande['id']); ?></h2>
-                <p>Date: <?php echo htmlspecialchars($commande['date']); ?></p>
-                <?php if (isset($articles[$commande['id']])): ?>
-                    <h3>Article</h3>
-                    <p>Nom: <?php echo htmlspecialchars($articles[$commande['id']]['nom']); ?></p>
-                    <p>Description: <?php echo htmlspecialchars($articles[$commande['id']]['description']); ?></p>
-                    <p>Prix: <?php echo htmlspecialchars($articles[$commande['id']]['prix']); ?> €</p>
-                <?php endif; ?>
+                <p>Date: <?php echo htmlspecialchars($commande['date_commande'] ?? ''); ?></p>
+                <p>Prix Total: <?php echo htmlspecialchars($commande['prix_total']); ?> €</p>
+                <a href="order_details.php?commande_id=<?php echo $commande['id']; ?>">Voir les détails</a>
             </div>
         <?php endforeach; ?>
     <?php else: ?>
