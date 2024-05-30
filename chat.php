@@ -15,9 +15,7 @@ try {
         SELECT 
             m.article_id, 
             a.nom AS article_nom, 
-            u.id AS vendeur_id, 
-            u.nom AS vendeur_nom, 
-            u.prenom AS vendeur_prenom
+            u.id AS vendeur_id
         FROM messagerie m
         JOIN articles a ON m.article_id = a.id
         JOIN utilisateurs u ON m.vendeur_id = u.id
@@ -40,6 +38,22 @@ try {
     <link href="style.css" rel="stylesheet" type="text/css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .discussion {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .discussion p {
+            margin: 0;
+        }
+        .discussion:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
 <div class="wrapper">
@@ -77,9 +91,8 @@ try {
         <div class="messages">
             <?php if (count($discussions) > 0): ?>
                 <?php foreach ($discussions as $discussion): ?>
-                    <div class="discussion">
-                        <p><strong>Article :</strong> <?php echo htmlspecialchars($discussion['article_nom']); ?></p>
-                        <p><strong>Vendeur :</strong> <a href="discussion.php?article_id=<?php echo $discussion['article_id']; ?>&vendeur_id=<?php echo $discussion['vendeur_id']; ?>"><?php echo htmlspecialchars($discussion['vendeur_prenom'] . ' ' . $discussion['vendeur_nom']); ?></a></p>
+                    <div class="discussion" onclick="window.location.href='discussion.php?article_id=<?php echo $discussion['article_id']; ?>&vendeur_id=<?php echo $discussion['vendeur_id']; ?>'">
+                        <p><strong>Discussion à propos de :</strong> <?php echo htmlspecialchars($discussion['article_nom']); ?></p>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
@@ -96,3 +109,4 @@ try {
 </div>
 </body>
 </html>
+
