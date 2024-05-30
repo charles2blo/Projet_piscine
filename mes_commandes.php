@@ -73,6 +73,7 @@ if ($commandes) {
     </div>
 </div>
 <div class="commandes">
+    <a href="profile.php" class="btn-retour">Retour</a>
     <?php if ($commandes): ?>
         <?php foreach ($commandes as $commande): ?>
             <div class="commande">

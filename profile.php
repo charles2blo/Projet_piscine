@@ -50,6 +50,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['demande_statut'])) {
             $("#toggle-payments").click(function(){
                 $("#payment-container").toggle();
             });
+            $("#learn-more-btn").click(function(){
+                $("#seller-application").show();
+                $('html, body').animate({
+                    scrollTop: $("#seller-application").offset().top
+                }, 1000);
+            });
         });
     </script>
 </head>
@@ -67,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['demande_statut'])) {
         <a href="browse.php"><i class="fas fa-th-list"></i> Tout Parcourir</a>
         <a href="chat.php"><i class="fas fa-comments"></i> Chat</a>
         <a href="cart.php"><i class="fas fa-shopping-cart"></i> Panier</a>
-        <?php if ($user['type_utilisateur'] == 'vendeur' || $user['type_utilisateur'] == 'admin'): ?>
+        <?php if (isset($_SESSION['user_id'])): ?>
             <a href="publish_article.php">Publier un article</a>
         <?php endif; ?>
         <div class="dropdown">
@@ -85,6 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['demande_statut'])) {
         <strong>Nom :</strong> <?php echo htmlspecialchars($user['prenom'] . ' ' . $user['nom']); ?><br>
         <strong>Email :</strong> <?php echo htmlspecialchars($user['email']); ?><br>
         <strong>Statut :</strong> <?php echo htmlspecialchars($user['type_utilisateur']); ?><br>
+
 
         <button id="toggle-addresses" class="btn">Carnet d'adresses</button>
 
@@ -124,23 +131,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['demande_statut'])) {
 
         <h3><a href="mes_commandes.php">Mes Commandes</a></h3>
 
-        <?php if ($user['type_utilisateur'] == 'acheteur'): ?>
-            <form method="post">
-                <input type="checkbox" name="accepter_conditions" required> J'accepte les conditions générales de vente<br>
-                <input type="submit" name="demande_statut" value="Demander à devenir vendeur">
-            </form>
-        <?php endif; ?>
-
         <h3><a href="mes-annonces.php">Mes annonces</a></h3>
 
         <h3>Ma Wishlist</h3>
         <!-- Code pour afficher les articles likés -->
         <h3>Personnalisation</h3>
         <!-- Code pour personnaliser le thème -->
+
+        <?php if ($user['type_utilisateur'] == 'admin'): ?>
+            <h3><a href="manage_sellers.php" class="btn">Gestion des vendeurs</a></h3>
+        <?php endif; ?>
+
         <h3><a href="logout.php">Se Déconnecter</a></h3>
+
+        <?php if ($user['type_utilisateur'] == 'acheteur'): ?>
+            <h3>Voulez-vous publier des articles sur Agora Francia ?</h3>
+            <button id="learn-more-btn" class="btn">En savoir plus</button>
+
+            <div id="seller-application" style="display:none;">
+                <h3>Politique de vente:</h3>
+                <p>En tant que vendeur, vous devez fournir des informations précises et complètes sur vos articles.</p>
+                <p>Vous devez garantir que les articles que vous vendez sont conformes à la description fournie.</p>
+                <p>Vous devez expédier les articles dans les délais spécifiés.</p>
+                <p>Vous acceptez que Agora Francia ne soit pas responsable des litiges entre vous et les acheteurs.</p>
+                <p>Vous acceptez de respecter toutes les lois et réglementations applicables en matière de vente en ligne.</p>
+                <p>Agora Francia se réserve le droit de suspendre ou de supprimer votre compte en cas de non-respect de ces conditions.</p>
+                <form method="post">
+                    <input type="checkbox" name="accepter_conditions" required> J'accepte les conditions générales de vente<br>
+                    <input type="submit" name="demande_statut" value="Demander à devenir vendeur">
+                </form>
+            </div>
+        <?php endif; ?>
+
     </div>
     <footer class="footer">
-        <p>Contactez-nous : <a href="mailto:contact@agorafrancia.fr">contact@agorafrancia.fr</a> | Téléphone : <a href="tel:+33123456789">01 23 45 67 89</a> | <a href="https://www.google.fr/maps/place/37+Quai+de+Grenelle,+75015+Paris/@48.8515004,2.2846575,17z/data=!3m1!4b1!4m6!3m5!1s0x47e6700497ee3ec5:0xdd60f514adcdb346!8m2!3d48.8515004!4d2.2872324!16s%2Fg%2F11bw3y1mf8?entry=ttu" target="_blank"><i class="fas fa-map-marker-alt"></i> bureaux</a></p>
+        <p>Contactez-nous : <a href="mailto:contact@agorafrancia.fr">contact@agorafrancia.fr</a> | Téléphone : <a href="tel:+33123456789">01 23 45 67 89</a> | <a href="https://www.google.fr/maps/place/37+Quai+de+Grenelle,+75015+Paris/@48.8515004,2.2846575,17z/data=!3m1!4b1!4m6!3m5!1s0x47e6700497ee3ec5:0xdd60f514adcdb346!8m2!3d48.8515004!4d2.2872324!16s%2Fg%2F11bw3y1mf8?entry=ttu" target="_blank"><i class="fas fa-map-marker-alt"></i> Localisation</a>
+        </p>
     </footer>
 </div>
 </body>
