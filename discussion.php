@@ -12,7 +12,7 @@ $vendeur_id = isset($_GET['vendeur_id']) ? $_GET['vendeur_id'] : null;
 $article_id = isset($_GET['article_id']) ? $_GET['article_id'] : null;
 
 if (!$vendeur_id || !$article_id) {
-    header('Location: browse.php');
+    header('Location: chat.php');
     exit();
 }
 
@@ -36,26 +36,44 @@ try {
         throw new Exception("Article non trouvé");
     }
 
-    // Récupérer les détails de l'article et du vendeur
-    $stmt = $pdo->prepare("SELECT a.nom AS article_nom, a.prix AS article_prix, u.nom AS vendeur_nom, u.prenom AS vendeur_prenom FROM articles a JOIN utilisateurs u ON a.vendeur_id = u.id WHERE a.id = ?");
-    $stmt->execute([$article_id]);
-    $article = $stmt->fetch();
-
-    if (!$article) {
-        throw new Exception("Article ou vendeur non trouvé");
-    }
-} catch (Exception $e) {
+    // Récupérer les détails de la discussion
+    $stmt = $pdo->prepare("
+        SELECT 
+            m.*, 
+            a.nom AS article_nom, 
+            u.nom AS vendeur_nom, 
+            u.prenom AS vendeur_prenom 
+        FROM messagerie m
+        JOIN articles a ON m.article_id = a.id
+        JOIN utilisateurs u ON m.vendeur_id = u.id
+        WHERE m.article_id = ? AND (m.vendeur_id = ? OR m.user_id = ?)
+        ORDER BY m.timestamp ASC
+    ");
+    $stmt->execute([$article_id, $vendeur_id, $user_id]);
+    $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
     echo "Erreur: " . $e->getMessage();
     die();
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $proposed_price = $_POST['proposed_price'];
     $message = $_POST['message'];
+    $action = isset($_POST['action']) ? $_POST['action'] : null;
+
+    if ($action) {
+        if ($action == 'accept') {
+            $message = "Votre offre a été acceptée. Vous pouvez maintenant ajouter l'article à votre panier.";
+        } elseif ($action == 'reject') {
+            $message = "Votre offre a été refusée.";
+        } elseif ($action == 'counter') {
+            $message = "Contre-offre : " . $message;
+        }
+    }
+
     try {
         $stmt = $pdo->prepare("INSERT INTO messagerie (user_id, vendeur_id, article_id, message) VALUES (?, ?, ?, ?)");
-        $stmt->execute([$user_id, $vendeur_id, $article_id, "Prix proposé: " . $proposed_price . " € - Message: " . $message]);
-        header('Location: chat.php');
+        $stmt->execute([$user_id, $vendeur_id, $article_id, $message]);
+        header("Location: discussion.php?article_id=$article_id&vendeur_id=$vendeur_id");
         exit();
     } catch (PDOException $e) {
         echo "Erreur: " . $e->getMessage();
@@ -68,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Envoyer une offre</title>
+    <title>Discussion - Agora Francia</title>
     <link href="style.css" rel="stylesheet" type="text/css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -105,18 +123,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <div class="section">
-        <h2>Faire une offre</h2>
-        <div class="article-info">
-            <p><strong>Nom de l'article :</strong> <?php echo htmlspecialchars($article['article_nom']); ?></p>
-            <p><strong>Prix de l'article :</strong> <?php echo htmlspecialchars($article['article_prix']); ?> €</p>
-            <p><strong>Vendeur :</strong> <?php echo htmlspecialchars($article['vendeur_prenom'] . ' ' . $article['vendeur_nom']); ?></p>
+        <h2>Discussion sur l'article : <?php echo htmlspecialchars($messages[0]['article_nom']); ?></h2>
+        <div class="messages">
+            <?php if (count($messages) > 0): ?>
+                <?php foreach ($messages as $message): ?>
+                    <div class="message">
+                        <p><strong><?php echo ($message['user_id'] == $user_id) ? "Vous" : htmlspecialchars($message['vendeur_prenom'] . ' ' . $message['vendeur_nom']); ?> :</strong> <?php echo htmlspecialchars($message['message']); ?></p>
+                        <p><small><?php echo htmlspecialchars($message['timestamp']); ?></small></p>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p>Aucun message dans cette discussion.</p>
+            <?php endif; ?>
         </div>
-        <form method="post" action="message.php?vendeur_id=<?php echo $vendeur_id; ?>&article_id=<?php echo $article_id; ?>">
-            <label for="proposed_price">Prix proposé (€) :</label>
-            <input type="number" id="proposed_price" name="proposed_price" required>
+
+        <?php if (isset($messages) && end($messages)['message'] == "Votre offre a été acceptée. Vous pouvez maintenant ajouter l'article à votre panier.") : ?>
+            <a href="add_to_cart.php?article_id=<?php echo $article_id; ?>" class="btn btn-primary">Ajouter au Panier</a>
+        <?php endif; ?>
+
+        <form method="post" action="discussion.php?article_id=<?php echo $article_id; ?>&vendeur_id=<?php echo $vendeur_id; ?>">
             <label for="message">Message :</label>
             <textarea id="message" name="message" required></textarea>
             <input type="submit" value="Envoyer">
+            <?php if ($user_id == $vendeur_id): ?>
+                <button type="submit" name="action" value="accept">Accepter</button>
+                <button type="submit" name="action" value="reject">Refuser</button>
+                <button type="submit" name="action" value="counter">Faire une contre-offre</button>
+            <?php endif; ?>
         </form>
     </div>
 

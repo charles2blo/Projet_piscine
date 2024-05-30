@@ -15,20 +15,16 @@ try {
         SELECT 
             m.article_id, 
             a.nom AS article_nom, 
-            u.id AS autre_user_id,
-            u.nom AS autre_user_nom, 
-            u.prenom AS autre_user_prenom,
-            CASE 
-                WHEN m.user_id = ? THEN (SELECT nom FROM utilisateurs WHERE id = m.vendeur_id)
-                ELSE (SELECT nom FROM utilisateurs WHERE id = m.user_id)
-            END AS autre_user_nom
+            u.id AS vendeur_id, 
+            u.nom AS vendeur_nom, 
+            u.prenom AS vendeur_prenom
         FROM messagerie m
         JOIN articles a ON m.article_id = a.id
-        JOIN utilisateurs u ON (m.user_id = u.id OR m.vendeur_id = u.id)
+        JOIN utilisateurs u ON m.vendeur_id = u.id
         WHERE m.user_id = ? OR m.vendeur_id = ?
-        GROUP BY m.article_id, autre_user_nom
+        GROUP BY m.article_id, m.vendeur_id
     ");
-    $stmt->execute([$user_id, $user_id, $user_id]);
+    $stmt->execute([$user_id, $user_id]);
     $discussions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     echo "Erreur: " . $e->getMessage();
@@ -42,6 +38,8 @@ try {
     <meta charset="UTF-8">
     <title>Chat - Agora Francia</title>
     <link href="style.css" rel="stylesheet" type="text/css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
 <div class="wrapper">
@@ -81,9 +79,7 @@ try {
                 <?php foreach ($discussions as $discussion): ?>
                     <div class="discussion">
                         <p><strong>Article :</strong> <?php echo htmlspecialchars($discussion['article_nom']); ?></p>
-                        <p><strong><?php echo ($user_id == $discussion['autre_user_id']) ? "Vendeur" : "Acheteur"; ?> :</strong> 
-                        <a href="discussion.php?article_id=<?php echo $discussion['article_id']; ?>&vendeur_id=<?php echo $discussion['autre_user_id']; ?>">
-                        <?php echo htmlspecialchars($discussion['autre_user_prenom'] . ' ' . $discussion['autre_user_nom']); ?></a></p>
+                        <p><strong>Vendeur :</strong> <a href="discussion.php?article_id=<?php echo $discussion['article_id']; ?>&vendeur_id=<?php echo $discussion['vendeur_id']; ?>"><?php echo htmlspecialchars($discussion['vendeur_prenom'] . ' ' . $discussion['vendeur_nom']); ?></a></p>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>

@@ -44,34 +44,34 @@ if ($commandes) {
 
 <body>
 <div class="wrapper">
-    <div class="header">
-        <h1>Agora Francia</h1>
-        <div class="logo-notification">
-            <a href="notifications.html" class="notification-icon"><i class="fas fa-bell"></i></a>
-            <img src="logo.png" width="100" height="100" alt="logoAgora">
-        </div>
+<div class="header">
+    <h1>Agora Francia</h1>
+    <div class="logo-notification">
+        <a href="notifications.html" class="notification-icon"><i class="fas fa-bell"></i></a>
+        <img src="logo.png" width="100" height="100" alt="logoAgora">
     </div>
+</div>
     <div class="navigation">
         <a href="index.html"><i class="fas fa-home"></i> Accueil</a>
         <a href="browse.php"><i class="fas fa-th-list"></i> Tout Parcourir</a>
         <a href="chat.php"><i class="fas fa-comments"></i> Chat</a>
         <a href="cart.php"><i class="fas fa-shopping-cart"></i> Panier</a>
-        <?php if (isset($_SESSION['user_id'])): ?>
-            <a href="publish_article.php">Publier un article</a>
-        <?php endif; ?>
-        <div class="dropdown">
-            <a href="#votrecompte" class="dropbtn"><i class="fas fa-user"></i> Votre Compte</a>
-            <div class="dropdown-content">
-                <?php if (isset($_SESSION['user_id'])): ?>
-                    <a href="profile.php">Mon Profil</a>
-                    <a href="logout.php">Se Déconnecter</a>
-                <?php else: ?>
-                    <a href="#" id="login-btn">Se connecter</a>
-                    <a href="#" id="signup-btn">S'inscrire</a>
-                <?php endif; ?>
-            </div>
+    <?php if (isset($_SESSION['user_id'])): ?>
+        <a href="publish_article.php">Publier un article</a>
+    <?php endif; ?>
+    <div class="dropdown">
+        <a href="#votrecompte" class="dropbtn"><i class="fas fa-user"></i> Votre Compte</a>
+        <div class="dropdown-content">
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <a href="profile.php">Mon Profil</a>
+                <a href="logout.php">Se Déconnecter</a>
+            <?php else: ?>
+                <a href="#" id="login-btn">Se connecter</a>
+                <a href="#" id="signup-btn">S'inscrire</a>
+            <?php endif; ?>
         </div>
     </div>
+</div>
 <div class="commandes">
     <?php if ($commandes): ?>
         <?php foreach ($commandes as $commande): ?>
