@@ -48,22 +48,6 @@ $cartes = $stmt->fetchAll();
 <head>
     <meta charset="UTF-8">
     <title>Détails de la Commande #<?php echo htmlspecialchars($commande['id'] ?? ''); ?></title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .commande-details {
-            margin: 20px;
-        }
-        .article {
-            border: 1px solid #ccc;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-        .article img {
-            max-width: 100px;
-        }
-    </style>
     <link href="style.css" rel="stylesheet" type="text/css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="script.js"></script>
@@ -74,12 +58,15 @@ $cartes = $stmt->fetchAll();
 <div class="wrapper">
     <div class="header">
         <h1>Agora Francia</h1>
-        <img src="logo.png" width="100" height="100" alt="logoAgora">
+        <div class="logo-notification">
+            <a href="notifications.html" class="notification-icon"><i class="fas fa-bell"></i></a>
+            <img src="logo.png" width="100" height="100" alt="logoAgora">
+        </div>
     </div>
     <div class="navigation">
         <a href="index.html"><i class="fas fa-home"></i> Accueil</a>
         <a href="browse.php"><i class="fas fa-th-list"></i> Tout Parcourir</a>
-        <a href="notifications.html"><i class="fas fa-bell"></i> Notifications</a>
+        <a href="chat.php"><i class="fas fa-comments"></i> Chat</a>
         <a href="cart.php"><i class="fas fa-shopping-cart"></i> Panier</a>
         <?php if (isset($_SESSION['user_id'])): ?>
             <a href="publish_article.php">Publier un article</a>
@@ -97,32 +84,34 @@ $cartes = $stmt->fetchAll();
             </div>
         </div>
     </div>
-<h1>Détails de la Commande #<?php echo htmlspecialchars($commande['id'] ?? ''); ?></h1>
-<div class="commande-details">
-    <p>Date: <?php echo htmlspecialchars($commande['date_commande'] ?? ''); ?></p>
-    <p>Prix Total: <?php echo htmlspecialchars($commande['prix_total'] ?? ''); ?> €</p>
-    <p>Adresse de livraison: <?php echo htmlspecialchars($adresse_livraison ?? ''); ?></p>
-    <h3>Articles</h3>
-    <?php if ($articles_commandes): ?>
-        <?php foreach ($articles_commandes as $article): ?>
-            <div class="article">
-                <h4><?php echo htmlspecialchars($article['nom'] ?? ''); ?></h4>
-                <p>Description: <?php echo htmlspecialchars($article['description'] ?? ''); ?></p>
-                <p>Prix: <?php echo htmlspecialchars($article['prix'] ?? ''); ?> €</p>
-                <p>Quantité: <?php echo htmlspecialchars($article['quantite'] ?? ''); ?></p>
-                <p>État: <?php echo htmlspecialchars($article['etat'] ?? ''); ?></p>
-                <?php if (!empty($article['photo'])): ?>
-                    <img src="<?php echo htmlspecialchars($article['photo']); ?>" alt="Photo de l'article">
-                <?php endif; ?>
-            </div>
+    <h1>Détails de la Commande #<?php echo htmlspecialchars($commande['id'] ?? ''); ?></h1>
+    <div class="commande-details">
+        <p>Date: <?php echo htmlspecialchars($commande['date_commande'] ?? ''); ?></p>
+        <p>Prix Total: <?php echo htmlspecialchars($commande['prix_total'] ?? ''); ?> €</p>
+        <h3>Articles</h3>
+        <?php if ($articles_commandes): ?>
+            <?php foreach ($articles_commandes as $article): ?>
+                <div class="article-container">
+                    <?php if (!empty($article['photo'])): ?>
+                        <img src="<?php echo htmlspecialchars($article['photo']); ?>" alt="Photo de l'article" class="article-photo">
+                    <?php endif; ?>
+                    <div class="article-details">
+                        <h4><?php echo htmlspecialchars($article['nom'] ?? ''); ?></h4>
+                        <p>Description: <?php echo htmlspecialchars($article['description'] ?? ''); ?></p>
+                        <p>Prix: <?php echo htmlspecialchars($article['prix'] ?? ''); ?> €</p>
+                        <p>Quantité: <?php echo htmlspecialchars($article['quantite'] ?? ''); ?></p>
+                        <p>État: <?php echo htmlspecialchars($article['etat'] ?? ''); ?></p>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p>Aucun article associé à cette commande.</p>
+        <?php endif; ?>
+        <h3>Moyens de paiement</h3>
+        <?php foreach ($cartes as $carte): ?>
+            <p><?php echo htmlspecialchars($carte['type_carte'] ?? ''); ?>: **** **** **** <?php echo htmlspecialchars(substr($carte['numero_carte'], -4) ?? ''); ?></p>
         <?php endforeach; ?>
-    <?php else: ?>
-        <p>Aucun article associé à cette commande.</p>
-    <?php endif; ?>
-    <h3>Moyens de paiement</h3>
-    <?php foreach ($cartes as $carte): ?>
-        <p><?php echo htmlspecialchars($carte['type_carte'] ?? ''); ?>: **** **** **** <?php echo htmlspecialchars(substr($carte['numero_carte'], -4) ?? ''); ?></p>
-    <?php endforeach; ?>
-</div>
+        <p>Adresse de livraison: <?php echo htmlspecialchars($adresse_livraison ?? ''); ?></p>
+    </div>
 </body>
 </html>

@@ -47,12 +47,15 @@ try {
 <div class="wrapper">
     <div class="header">
         <h1>Agora Francia</h1>
-        <img src="logo.png" width="100" height="100" alt="logoAgora">
+        <div class="logo-notification">
+            <a href="notifications.html" class="notification-icon"><i class="fas fa-bell"></i></a>
+            <img src="logo.png" width="100" height="100" alt="logoAgora">
+        </div>
     </div>
     <div class="navigation">
         <a href="index.html"><i class="fas fa-home"></i> Accueil</a>
         <a href="browse.php"><i class="fas fa-th-list"></i> Tout Parcourir</a>
-        <a href="notifications.html"><i class="fas fa-bell"></i> Notifications</a>
+        <a href="chat.php"><i class="fas fa-comments"></i> Chat</a>
         <a href="cart.php"><i class="fas fa-shopping-cart"></i> Panier</a>
         <?php if (isset($_SESSION['user_id'])): ?>
             <a href="publish_article.php">Publier un article</a>
@@ -77,24 +80,27 @@ try {
     <p>Date: <?php echo htmlspecialchars($commande['date_commande']); ?></p>
     <p>Prix Total: <?php echo htmlspecialchars($commande['prix_total']); ?> €</p>
 
-    <h3>Adresse de livraison:</h3>
-    <p><?php echo htmlspecialchars($livraison); ?></p>
-
     <h3>Articles:</h3>
     <?php foreach ($articles as $article): ?>
-        <div class="article">
-            <h4><?php echo htmlspecialchars($article['nom']); ?></h4>
-            <p><?php echo htmlspecialchars($article['description']); ?></p>
-            <p>Prix: <?php echo htmlspecialchars($article['prix']); ?> €</p>
-            <p>Quantité: <?php echo htmlspecialchars($article['quantite']); ?></p>
+        <div class="article-container">
             <?php if ($article['photo']): ?>
-                <img src="<?php echo htmlspecialchars($article['photo']); ?>" alt="Photo de l'article">
+                <img src="<?php echo htmlspecialchars($article['photo']); ?>" alt="Photo de l'article" class="article-photo">
             <?php endif; ?>
+            <div class="article-details">
+                <h4><?php echo htmlspecialchars($article['nom']); ?></h4>
+                <p><?php echo htmlspecialchars($article['description']); ?></p>
+                <p>Prix: <?php echo htmlspecialchars($article['prix']); ?> €</p>
+                <p>Quantité: <?php echo htmlspecialchars($article['quantite']); ?></p>
+            </div>
         </div>
     <?php endforeach; ?>
 
     <h3>Moyen de paiement:</h3>
     <p><?php echo htmlspecialchars($carte['type_carte']); ?>: **** **** **** <?php echo htmlspecialchars(substr($carte['numero_carte'], -4)); ?></p>
+
+    <h3>Adresse de livraison:</h3>
+    <p><?php echo htmlspecialchars($livraison); ?></p>
+
 </div>
 </body>
 </html>
