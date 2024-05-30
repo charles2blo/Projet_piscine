@@ -87,16 +87,20 @@ try {
                     <img src="<?php echo htmlspecialchars($article['vendeur_photo']); ?>" alt="Photo de profil" class="profile-pic">
                 <?php endif; ?>
             </div>
-            <form action="add_to_cart.php" method="post">
-                <input type="hidden" name="article_id" value="<?php echo $article['id']; ?>">
-                <label for="quantity">Quantité:</label>
-                <select name="quantity" id="quantity">
-                    <?php for ($i = 1; $i <= $article['quantite']; $i++): ?>
-                        <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
-                    <?php endfor; ?>
-                </select>
-                <input type="submit" value="Ajouter au Panier">
-            </form>
+            <?php if ($article['type_vente'] == 'negociation'): ?>
+                <a href="message.php?vendeur_id=<?php echo $article['vendeur_id']; ?>&article_id=<?php echo $article['id']; ?>" class="offer-button">Faire une offre</a>
+            <?php else: ?>
+                <form action="add_to_cart.php" method="post">
+                    <input type="hidden" name="article_id" value="<?php echo $article['id']; ?>">
+                    <label for="quantity">Quantité:</label>
+                    <select name="quantity" id="quantity">
+                        <?php for ($i = 1; $i <= $article['quantite']; $i++): ?>
+                            <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <input type="submit" value="Ajouter au Panier">
+                </form>
+            <?php endif; ?>
         </div>
     </div>
 </div>

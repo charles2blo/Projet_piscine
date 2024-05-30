@@ -11,9 +11,25 @@ $user_id = $_SESSION['user_id'];
 
 // Récupérer les discussions de l'utilisateur
 try {
-    $stmt = $pdo->prepare("SELECT m.*, a.nom AS article_nom FROM messagerie m JOIN articles a ON m.article_id = a.id WHERE m.user_id = ? OR m.vendeur_id = ?");
-    $stmt->execute([$user_id, $user_id]);
-    $messagerie = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt = $pdo->prepare("
+        SELECT 
+            m.article_id, 
+            a.nom AS article_nom, 
+            u.id AS autre_user_id,
+            u.nom AS autre_user_nom, 
+            u.prenom AS autre_user_prenom,
+            CASE 
+                WHEN m.user_id = ? THEN (SELECT nom FROM utilisateurs WHERE id = m.vendeur_id)
+                ELSE (SELECT nom FROM utilisateurs WHERE id = m.user_id)
+            END AS autre_user_nom
+        FROM messagerie m
+        JOIN articles a ON m.article_id = a.id
+        JOIN utilisateurs u ON (m.user_id = u.id OR m.vendeur_id = u.id)
+        WHERE m.user_id = ? OR m.vendeur_id = ?
+        GROUP BY m.article_id, autre_user_nom
+    ");
+    $stmt->execute([$user_id, $user_id, $user_id]);
+    $discussions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     echo "Erreur: " . $e->getMessage();
     die();
@@ -61,12 +77,13 @@ try {
     <div class="section">
         <h2>Mes Discussions</h2>
         <div class="messages">
-            <?php if (count($messagerie) > 0): ?>
-                <?php foreach ($messagerie as $message): ?>
-                    <div class="message">
-                        <p><strong>Article :</strong> <?php echo htmlspecialchars($message['article_nom']); ?></p>
-                        <p><strong>Message :</strong> <?php echo htmlspecialchars($message['message']); ?></p>
-                        <p><small><?php echo htmlspecialchars($message['timestamp']); ?></small></p>
+            <?php if (count($discussions) > 0): ?>
+                <?php foreach ($discussions as $discussion): ?>
+                    <div class="discussion">
+                        <p><strong>Article :</strong> <?php echo htmlspecialchars($discussion['article_nom']); ?></p>
+                        <p><strong><?php echo ($user_id == $discussion['autre_user_id']) ? "Vendeur" : "Acheteur"; ?> :</strong> 
+                        <a href="discussion.php?article_id=<?php echo $discussion['article_id']; ?>&vendeur_id=<?php echo $discussion['autre_user_id']; ?>">
+                        <?php echo htmlspecialchars($discussion['autre_user_prenom'] . ' ' . $discussion['autre_user_nom']); ?></a></p>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>

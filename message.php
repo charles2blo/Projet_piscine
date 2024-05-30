@@ -11,11 +11,50 @@ $user_id = $_SESSION['user_id'];
 $vendeur_id = isset($_GET['vendeur_id']) ? $_GET['vendeur_id'] : null;
 $article_id = isset($_GET['article_id']) ? $_GET['article_id'] : null;
 
+if (!$vendeur_id || !$article_id) {
+    header('Location: browse.php');
+    exit();
+}
+
+try {
+    // Vérifier si l'article et les utilisateurs existent
+    $stmt = $pdo->prepare("SELECT id FROM utilisateurs WHERE id = ?");
+    $stmt->execute([$vendeur_id]);
+    if ($stmt->rowCount() == 0) {
+        throw new Exception("Vendeur non trouvé");
+    }
+
+    $stmt = $pdo->prepare("SELECT id FROM utilisateurs WHERE id = ?");
+    $stmt->execute([$user_id]);
+    if ($stmt->rowCount() == 0) {
+        throw new Exception("Utilisateur non trouvé");
+    }
+
+    $stmt = $pdo->prepare("SELECT id FROM articles WHERE id = ?");
+    $stmt->execute([$article_id]);
+    if ($stmt->rowCount() == 0) {
+        throw new Exception("Article non trouvé");
+    }
+
+    // Récupérer les détails de l'article et du vendeur
+    $stmt = $pdo->prepare("SELECT a.nom AS article_nom, a.prix AS article_prix, u.nom AS vendeur_nom, u.prenom AS vendeur_prenom FROM articles a JOIN utilisateurs u ON a.vendeur_id = u.id WHERE a.id = ?");
+    $stmt->execute([$article_id]);
+    $article = $stmt->fetch();
+
+    if (!$article) {
+        throw new Exception("Article ou vendeur non trouvé");
+    }
+} catch (Exception $e) {
+    echo "Erreur: " . $e->getMessage();
+    die();
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $proposed_price = $_POST['proposed_price'];
     $message = $_POST['message'];
     try {
         $stmt = $pdo->prepare("INSERT INTO messagerie (user_id, vendeur_id, article_id, message) VALUES (?, ?, ?, ?)");
-        $stmt->execute([$user_id, $vendeur_id, $article_id, $message]);
+        $stmt->execute([$user_id, $vendeur_id, $article_id, "Prix proposé: " . $proposed_price . " € - Message: " . $message]);
         header('Location: chat.php');
         exit();
     } catch (PDOException $e) {
@@ -29,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Envoyer un message</title>
+    <title>Envoyer une offre</title>
     <link href="style.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -64,8 +103,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <div class="section">
-        <h2>Envoyer un message</h2>
+        <h2>Faire une offre</h2>
+        <div class="article-info">
+            <p><strong>Nom de l'article :</strong> <?php echo htmlspecialchars($article['article_nom']); ?></p>
+            <p><strong>Prix de l'article :</strong> <?php echo htmlspecialchars($article['article_prix']); ?> €</p>
+            <p><strong>Vendeur :</strong> <?php echo htmlspecialchars($article['vendeur_prenom'] . ' ' . $article['vendeur_nom']); ?></p>
+        </div>
         <form method="post" action="message.php?vendeur_id=<?php echo $vendeur_id; ?>&article_id=<?php echo $article_id; ?>">
+            <label for="proposed_price">Prix proposé (€) :</label>
+            <input type="number" id="proposed_price" name="proposed_price" required>
             <label for="message">Message :</label>
             <textarea id="message" name="message" required></textarea>
             <input type="submit" value="Envoyer">
@@ -80,3 +126,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </div>
 </body>
 </html>
+
