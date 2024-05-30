@@ -21,6 +21,15 @@ $addresses = $stmt->fetchAll();
 $stmt = $pdo->prepare("SELECT * FROM cartes WHERE utilisateur_id = ?");
 $stmt->execute([$user_id]);
 $cards = $stmt->fetchAll();
+
+// Gestion de la demande de changement de statut
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['demande_statut'])) {
+    // Envoi d'une notification aux administrateurs
+    $notification_message = "L'utilisateur " . htmlspecialchars($user['prenom'] . ' ' . $user['nom']) . " a demandé à devenir vendeur.";
+    $stmt = $pdo->prepare("INSERT INTO notifications (utilisateur_id, message) VALUES (?, ?)");
+    $stmt->execute([$user_id, $notification_message]);
+    echo "Votre demande a été envoyée aux administrateurs.";
+}
 ?>
 
 <!DOCTYPE html>
@@ -48,35 +57,34 @@ $cards = $stmt->fetchAll();
 <div class="wrapper">
     <div class="header">
         <h1>Agora Francia</h1>
-        <img src="logo.png" width="100" height="100" alt="logoAgora">
+        <div class="logo-notification">
+            <a href="notifications.php" class="notification-icon"><i class="fas fa-bell"></i></a>
+            <img src="logo.png" width="100" height="100" alt="logoAgora">
+        </div>
     </div>
     <div class="navigation">
         <a href="index.html"><i class="fas fa-home"></i> Accueil</a>
         <a href="browse.php"><i class="fas fa-th-list"></i> Tout Parcourir</a>
-        <a href="notifications.html"><i class="fas fa-bell"></i> Notifications</a>
+        <a href="chat.php"><i class="fas fa-comments"></i> Chat</a>
         <a href="cart.php"><i class="fas fa-shopping-cart"></i> Panier</a>
-        <?php if (isset($_SESSION['user_id'])): ?>
+        <?php if ($user['type_utilisateur'] == 'vendeur' || $user['type_utilisateur'] == 'admin'): ?>
             <a href="publish_article.php">Publier un article</a>
         <?php endif; ?>
         <div class="dropdown">
             <a href="#votrecompte" class="dropbtn"><i class="fas fa-user"></i> Votre Compte</a>
             <div class="dropdown-content">
-                <?php if (isset($_SESSION['user_id'])): ?>
-                    <a href="profile.php">Mon Profil</a>
-                    <a href="logout.php">Se Déconnecter</a>
-                <?php else: ?>
-                    <a href="#" id="login-btn">Se connecter</a>
-                    <a href="#" id="signup-btn">S'inscrire</a>
-                <?php endif; ?>
+                <a href="profile.php">Mon Profil</a>
+                <a href="logout.php">Se Déconnecter</a>
             </div>
         </div>
     </div>
     <div class="section">
         <h2>Mon Profil</h2>
-        <img src="<?php echo $user['photo']; ?>" alt="Photo de Profil" width="150" height="150"><br>
+        <img src="<?php echo htmlspecialchars($user['photo']); ?>" alt="Photo de Profil" width="150" height="150"><br>
         <a href="upload_photo.php">Changer de photo</a><br>
-        <strong>Nom :</strong> <?php echo $user['prenom'] . ' ' . $user['nom']; ?><br>
-        <strong>Email :</strong> <?php echo $user['email']; ?><br>
+        <strong>Nom :</strong> <?php echo htmlspecialchars($user['prenom'] . ' ' . $user['nom']); ?><br>
+        <strong>Email :</strong> <?php echo htmlspecialchars($user['email']); ?><br>
+        <strong>Statut :</strong> <?php echo htmlspecialchars($user['type_utilisateur']); ?><br>
 
         <button id="toggle-addresses" class="btn">Carnet d'adresses</button>
 
@@ -84,16 +92,16 @@ $cards = $stmt->fetchAll();
             <h3>Carnet d'adresses</h3>
             <?php foreach ($addresses as $address): ?>
                 <p>
-                    <strong>Nom :</strong> <?php echo $address['nom']; ?><br>
-                    <strong>Prénom :</strong> <?php echo $address['prenom']; ?><br>
-                    <strong>Adresse :</strong> <?php echo $address['adresse_ligne1']; ?><br>
-                    <strong>Adresse Ligne 2 :</strong> <?php echo $address['adresse_ligne2']; ?><br>
-                    <strong>Ville :</strong> <?php echo $address['ville']; ?><br>
-                    <strong>Code Postal :</strong> <?php echo $address['code_postal']; ?><br>
-                    <strong>Pays :</strong> <?php echo $address['pays']; ?><br>
-                    <strong>Numéro de téléphone :</strong> <?php echo $address['numero_telephone']; ?><br>
+                    <strong>Nom :</strong> <?php echo htmlspecialchars($address['nom']); ?><br>
+                    <strong>Prénom :</strong> <?php echo htmlspecialchars($address['prenom']); ?><br>
+                    <strong>Adresse :</strong> <?php echo htmlspecialchars($address['adresse_ligne1']); ?><br>
+                    <strong>Adresse Ligne 2 :</strong> <?php echo htmlspecialchars($address['adresse_ligne2']); ?><br>
+                    <strong>Ville :</strong> <?php echo htmlspecialchars($address['ville']); ?><br>
+                    <strong>Code Postal :</strong> <?php echo htmlspecialchars($address['code_postal']); ?><br>
+                    <strong>Pays :</strong> <?php echo htmlspecialchars($address['pays']); ?><br>
+                    <strong>Numéro de téléphone :</strong> <?php echo htmlspecialchars($address['numero_telephone']); ?><br>
                 <form action="delete_adress.php" method="post" style="display:inline;">
-                    <input type="hidden" name="address_id" value="<?php echo $address['id']; ?>">
+                    <input type="hidden" name="address_id" value="<?php echo htmlspecialchars($address['id']); ?>">
                     <button type="submit" class="btn btn-danger">Supprimer</button>
                 </form>
                 </p>
@@ -107,8 +115,8 @@ $cards = $stmt->fetchAll();
             <h3>Moyens de paiement</h3>
             <?php foreach ($cards as $card): ?>
                 <p>
-                    <?php echo $card['type_carte']; ?>: **** **** **** <?php echo substr($card['numero_carte'], -4); ?><br>
-                    <a href="delete_card.php?id=<?php echo $card['id']; ?>" class="btn btn-danger">Supprimer</a>
+                    <?php echo htmlspecialchars($card['type_carte']); ?>: **** **** **** <?php echo htmlspecialchars(substr($card['numero_carte'], -4)); ?><br>
+                    <a href="delete_card.php?id=<?php echo htmlspecialchars($card['id']); ?>" class="btn btn-danger">Supprimer</a>
                 </p>
             <?php endforeach; ?>
             <a href="add_card.php" class="btn btn-success">Ajouter un moyen de paiement</a>
@@ -116,7 +124,14 @@ $cards = $stmt->fetchAll();
 
         <h3><a href="mes_commandes.php">Mes Commandes</a></h3>
 
-        <a href="mes-annonces.php">Mes annonces</a>
+        <?php if ($user['type_utilisateur'] == 'acheteur'): ?>
+            <form method="post">
+                <input type="checkbox" name="accepter_conditions" required> J'accepte les conditions générales de vente<br>
+                <input type="submit" name="demande_statut" value="Demander à devenir vendeur">
+            </form>
+        <?php endif; ?>
+
+        <h3><a href="mes-annonces.php">Mes annonces</a></h3>
 
         <h3>Ma Wishlist</h3>
         <!-- Code pour afficher les articles likés -->

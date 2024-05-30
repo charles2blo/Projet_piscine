@@ -17,8 +17,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    // Insérer le nouvel utilisateur
-    $stmt = $pdo->prepare("INSERT INTO utilisateurs (email, mot_de_passe, prenom, nom) VALUES (?, ?, ?, ?)");
+    // Insérer le nouvel utilisateur avec le statut 'acheteur'
+    $stmt = $pdo->prepare("INSERT INTO utilisateurs (email, mot_de_passe, prenom, nom, type_utilisateur) VALUES (?, ?, ?, ?, 'acheteur')");
     $stmt->execute([$email, $password, $first_name, $last_name]);
 
     $_SESSION['user_id'] = $pdo->lastInsertId();

@@ -11,6 +11,17 @@ if (!isset($_SESSION['user_id'])) {
 
 include 'db_connect.php';
 
+// Récupérer les informations de l'utilisateur
+$user_id = $_SESSION['user_id'];
+$stmt = $pdo->prepare("SELECT type_utilisateur FROM utilisateurs WHERE id = ?");
+$stmt->execute([$user_id]);
+$user = $stmt->fetch();
+
+if ($user['type_utilisateur'] != 'vendeur' && $user['type_utilisateur'] != 'admin') {
+    echo "<script>alert('Vous n avez pas la permission de publier une annonce.'); window.history.back();</script>";
+    exit;
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nom = $_POST['nom'];
     $description = $_POST['description'];
@@ -62,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="header">
         <h1>Agora Francia</h1>
         <div class="logo-notification">
-            <a href="notifications.html" class="notification-icon"><i class="fas fa-bell"></i></a>
+            <a href="notifications.php" class="notification-icon"><i class="fas fa-bell"></i></a>
             <img src="logo.png" width="100" height="100" alt="logoAgora">
         </div>
     </div>
