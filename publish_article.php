@@ -48,8 +48,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     try {
-        $stmt = $pdo->prepare("INSERT INTO articles (nom, description, categorie, prix, quantite, type_vente, etat, vendeur_id, photo, video) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$nom, $description, $categorie, $prix, $quantite, $type_vente, $etat, $vendeur_id, $photo, $video]);
+        // Définir la date de fin de l'enchère si le type de vente est 'enchere'
+        if ($type_vente == 'enchere') {
+            $now = new DateTime();
+            $date_fin = $now->modify('+5 minutes')->format('Y-m-d H:i:s');
+        } else {
+            $date_fin = null;
+        }
+
+        $stmt = $pdo->prepare("INSERT INTO articles (nom, description, categorie, prix, quantite, type_vente, etat, vendeur_id, photo, video, date_fin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$nom, $description, $categorie, $prix, $quantite, $type_vente, $etat, $vendeur_id, $photo, $video, $date_fin]);
 
         header("Location: profile.php");
         exit();

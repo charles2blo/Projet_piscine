@@ -87,7 +87,9 @@ try {
                     <img src="<?php echo htmlspecialchars($article['vendeur_photo']); ?>" alt="Photo de profil" class="profile-pic">
                 <?php endif; ?>
             </div>
-            <?php if ($article['type_vente'] == 'negociation'): ?>
+            <?php if ($article['type_vente'] == 'enchere'): ?>
+                <a href="enchere.php?id=<?php echo $article['id']; ?>" class="btn btn-primary">Accéder aux enchères</a>
+            <?php elseif ($article['type_vente'] == 'negociation'): ?>
                 <a href="message.php?vendeur_id=<?php echo $article['vendeur_id']; ?>&article_id=<?php echo $article['id']; ?>" class="offer-button">Faire une offre</a>
             <?php else: ?>
                 <form action="add_to_cart.php" method="post">
