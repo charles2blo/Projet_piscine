@@ -25,8 +25,14 @@ if (isset($_GET['prix_max']) && is_numeric($_GET['prix_max'])) {
     $filters[] = "prix <= :prix_max";
 }
 
+// Ajouter les filtres à la requête
 if ($filters) {
     $sql .= " AND " . implode(" AND ", $filters);
+}
+
+// Ajouter le tri par prix si spécifié
+if (isset($_GET['sort_order']) && in_array($_GET['sort_order'], ['asc', 'desc'])) {
+    $sql .= " ORDER BY prix " . $_GET['sort_order'];
 }
 
 try {
@@ -56,6 +62,7 @@ try {
 }
 ?>
 
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -70,15 +77,12 @@ try {
 <div class="wrapper">
     <div class="header">
         <h1>Agora Francia</h1>
-        <div class="logo-notification">
-            <a href="notifications.html" class="notification-icon"><i class="fas fa-bell"></i></a>
-            <img src="logo.png" width="100" height="100" alt="logoAgora">
-        </div>
+        <img src="logo.png" width="100" height="100" alt="logoAgora">
     </div>
     <div class="navigation">
         <a href="index.html"><i class="fas fa-home"></i> Accueil</a>
         <a href="browse.php"><i class="fas fa-th-list"></i> Tout Parcourir</a>
-        <a href="chat.php"><i class="fas fa-comments"></i> Chat</a>
+        <a href="notifications.html"><i class="fas fa-bell"></i> Notifications</a>
         <a href="cart.php"><i class="fas fa-shopping-cart"></i> Panier</a>
         <?php if (isset($_SESSION['user_id'])): ?>
             <a href="publish_article.php">Publier un article</a>
@@ -97,7 +101,6 @@ try {
         </div>
     </div>
 
-    <div class="section">
     <h1>Articles Disponibles</h1>
 
     <!-- Formulaire de filtre -->
@@ -127,6 +130,14 @@ try {
         <label for="prix_max">Prix maximum:</label>
         <input type="number" name="prix_max" id="prix_max" value="<?php echo isset($_GET['prix_max']) ? htmlspecialchars($_GET['prix_max']) : ''; ?>">
 
+        <!-- Option de tri -->
+        <label for="sort_order">Classer par:</label>
+        <select name="sort_order" id="sort_order">
+            <option value="">Sélectionner</option>
+            <option value="asc" <?php if(isset($_GET['sort_order']) && $_GET['sort_order'] == 'asc') echo 'selected'; ?>>Prix croissant</option>
+            <option value="desc" <?php if(isset($_GET['sort_order']) && $_GET['sort_order'] == 'desc') echo 'selected'; ?>>Prix décroissant</option>
+        </select>
+
         <input type="submit" value="Filtrer">
     </form>
 
@@ -138,20 +149,8 @@ try {
                 <?php if ($article['photo']): ?>
                     <a href="article_details.php?id=<?php echo $article['id']; ?>"><img src="<?php echo htmlspecialchars($article['photo']); ?>" alt="Photo de l'article"></a>
                 <?php endif; ?>
-
-                <?php if ($article['type_vente'] == 'negociation'): ?>
-                        <a href="message.php?vendeur_id=<?php echo $article['vendeur_id']; ?>&article_id=<?php echo $article['id']; ?>">Faire une offre</a>
-                        <?php else: ?>
-                        <form action="add_to_cart.php" method="post">
-                        <input type="hidden" name="article_id" value="<?php echo $article['id']; ?>">
-                        <input type="number" name="quantity" value="1" min="1" max="<?php echo htmlspecialchars($article['quantite']); ?>">
-                        <input type="submit" value="Ajouter au Panier">
-                        </form>
-                <?php endif; ?>
-
             </div>
         <?php endforeach; ?>
-    </div>
     </div>
     <footer class="footer">
         <p>
@@ -161,28 +160,4 @@ try {
 </div>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
