@@ -31,30 +31,41 @@ try {
     $stmt->execute([$acheteur_id]);
     $cartes = $stmt->fetchAll();
 
+    // Récupérer les adresses enregistrées
+    $stmt = $pdo->prepare("SELECT * FROM adresses WHERE utilisateur_id = ?");
+    $stmt->execute([$acheteur_id]);
+    $addresses = $stmt->fetchAll();
+
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $selected_card_id = $_POST['card_id'];
-
-        if ($selected_card_id == "new_card") {
-            $type_carte = $_POST['type_carte'];
-            $numero_carte = $_POST['numero_carte'];
-            $nom_carte = $_POST['nom_carte'];
-            $expiration = $_POST['expiration'];
-            $code_securite = $_POST['code_securite'];
-
-            $stmt = $pdo->prepare("INSERT INTO cartes (utilisateur_id, type_carte, numero_carte, nom_carte, expiration, code_securite) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$acheteur_id, $type_carte, $numero_carte, $nom_carte, $expiration, $code_securite]);
-
-            $selected_card_id = $pdo->lastInsertId();
+        // Adresse de livraison
+        $delivery_type = $_POST['delivery_type'];
+        if ($delivery_type == 'existing') {
+            $selected_address_id = $_POST['address_id'];
+            $stmt = $pdo->prepare("SELECT * FROM adresses WHERE id = ? AND utilisateur_id = ?");
+            $stmt->execute([$selected_address_id, $acheteur_id]);
+            $address = $stmt->fetch();
+        } else {
+            $address = [
+                'nom' => $_POST['nom'],
+                'prenom' => $_POST['prenom'],
+                'adresse_ligne1' => $_POST['adresse_ligne1'],
+                'adresse_ligne2' => $_POST['adresse_ligne2'],
+                'ville' => $_POST['ville'],
+                'code_postal' => $_POST['code_postal'],
+                'pays' => $_POST['pays'],
+                'numero_telephone' => $_POST['numero_telephone']
+            ];
         }
 
         // Insérer la commande
-        $stmt = $pdo->prepare("INSERT INTO commandes (acheteur_id, prix_total, date_commande, status) VALUES (?, ?, NOW(), 'en attente')");
-        $stmt->execute([$acheteur_id, $total]);
+        $stmt = $pdo->prepare("INSERT INTO commandes (acheteur_id, prix_total, date_commande, status, adresse_livraison) VALUES (?, ?, NOW(), 'en attente', ?)");
+        $adresse_livraison = $address['nom'] . ' ' . $address['prenom'] . ', ' . $address['adresse_ligne1'] . ', ' . $address['adresse_ligne2'] . ', ' . $address['ville'] . ', ' . $address['code_postal'] . ', ' . $address['pays'] . ', ' . $address['numero_telephone'];
+        $stmt->execute([$acheteur_id, $total, $adresse_livraison]);
         $commande_id = $pdo->lastInsertId();
 
         // Insérer les articles de la commande
         foreach ($panier as $article) {
-            $article_id = $article['article_id'];  // Assurez-vous d'utiliser le bon nom de colonne
+            $article_id = $article['article_id'];
             $quantite = $article['quantite'];
 
             // Vérifiez que l'article existe
@@ -156,10 +167,44 @@ try {
             <label for="code_securite">Code de sécurité:</label>
             <input type="text" name="code_securite" id="code_securite"><br>
         </div>
-        <input type="submit" value="Payer">
+
+        <h3>Adresse de livraison</h3>
+        <label>
+            <input type="radio" name="delivery_type" value="existing" checked> Utiliser une adresse enregistrée
+        </label>
+        <select name="address_id">
+            <?php foreach ($addresses as $address): ?>
+                <option value="<?php echo $address['id']; ?>">
+                    <?php echo htmlspecialchars($address['nom'] . ' ' . $address['prenom'] . ', ' . $address['adresse_ligne1'] . ', ' . $address['ville']); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+<br>
+        <label>
+            <input type="radio" name="delivery_type" value="new"> Saisir une nouvelle adresse
+        </label>
+        <div id="new-address" style="display: none;">
+            <input type="text" name="nom" placeholder="Nom"><br>
+            <input type="text" name="prenom" placeholder="Prénom"><br>
+            <input type="text" name="adresse_ligne1" placeholder="Adresse Ligne 1"><br>
+            <input type="text" name="adresse_ligne2" placeholder="Adresse Ligne 2 (optionnel)"><br>
+            <input type="text" name="ville" placeholder="Ville"><br>
+            <input type="text" name="code_postal" placeholder="Code Postal"><br>
+            <input type="text" name="pays" placeholder="Pays"><br>
+            <input type="text" name="numero_telephone" placeholder="Numéro de téléphone"><br>
+        </div>
+
+        <p><input type="submit" value="Payer"></p>
     </form>
 </div>
 <script>
+    document.querySelector('input[name="delivery_type"][value="existing"]').addEventListener('change', function() {
+        document.getElementById('new-address').style.display = 'none';
+    });
+    document.querySelector('input[name="delivery_type"][value="new"]').addEventListener('change', function() {
+        document.getElementById('new-address').style.display = 'block';
+    });
+
     document.getElementById('new_card').addEventListener('change', function() {
         document.getElementById('new_card_details').style.display = 'block';
         document.getElementById('type_carte').required = true;
@@ -183,3 +228,4 @@ try {
 </script>
 </body>
 </html>
+

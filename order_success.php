@@ -11,6 +11,11 @@ $user_id = $_SESSION['user_id'];
 $commande_id = $_GET['id'];
 
 try {
+    // Récupérer les informations de l'utilisateur
+    $stmt = $pdo->prepare("SELECT nom, prenom FROM utilisateurs WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $user = $stmt->fetch();
+
     // Récupérer les détails de la commande
     $stmt = $pdo->prepare("SELECT * FROM commandes WHERE id = ? AND acheteur_id = ?");
     $stmt->execute([$commande_id, $user_id]);
@@ -48,7 +53,7 @@ try {
     <div class="header">
         <h1>Agora Francia</h1>
         <div class="logo-notification">
-            <a href="notifications.html" class="notification-icon"><i class="fas fa-bell"></i></a>
+            <a href="notifications.php" class="notification-icon"><i class="fas fa-bell"></i></a>
             <img src="logo.png" width="100" height="100" alt="logoAgora">
         </div>
     </div>
@@ -75,7 +80,7 @@ try {
     </div>
 
     <h2>Commande Réussie</h2>
-    <p>Merci pour votre commande, <?php echo htmlspecialchars($user_id); ?> !</p>
+    <p>Merci pour votre commande, <?php echo htmlspecialchars($user['prenom'] . ' ' . $user['nom']); ?> !</p>
     <h3>Détails de la Commande #<?php echo htmlspecialchars($commande_id); ?></h3>
     <p>Date: <?php echo htmlspecialchars($commande['date_commande']); ?></p>
     <p>Prix Total: <?php echo htmlspecialchars($commande['prix_total']); ?> €</p>

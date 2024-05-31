@@ -111,7 +111,8 @@ $cartes = $stmt->fetchAll();
         <?php foreach ($cartes as $carte): ?>
             <p><?php echo htmlspecialchars($carte['type_carte'] ?? ''); ?>: **** **** **** <?php echo htmlspecialchars(substr($carte['numero_carte'], -4) ?? ''); ?></p>
         <?php endforeach; ?>
-        <p>Adresse de livraison: <?php echo htmlspecialchars($adresse_livraison ?? ''); ?></p>
+        <h3>Adresse de livraison</h3>
+            <?php echo htmlspecialchars($adresse_livraison ?? ''); ?>
     </div>
 </body>
 </html>
