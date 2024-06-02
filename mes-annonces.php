@@ -12,7 +12,7 @@ $user_id = $_SESSION['user_id'];
 
 // Récupérer les articles de l'utilisateur connecté
 try {
-    $stmt = $pdo->prepare("SELECT id, nom, description, photo, prix FROM articles WHERE vendeur_id = ?");
+    $stmt = $pdo->prepare("SELECT id, nom, description, photo, prix, quantite FROM articles WHERE vendeur_id = ?");
     $stmt->execute([$user_id]);
     $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
@@ -79,16 +79,19 @@ try {
         <div class="articles-grid">
             <?php if (count($articles) > 0): ?>
                 <?php foreach ($articles as $article): ?>
-                    <div class="article">
-                        <img src="<?php echo htmlspecialchars($article['photo']); ?>" alt="<?php echo htmlspecialchars($article['nom']); ?>" width="200" height="200">
-                        <h3><?php echo htmlspecialchars($article['nom']); ?></h3>
-                        <p><?php echo htmlspecialchars($article['description']); ?></p>
-                        <p><?php echo htmlspecialchars($article['prix']); ?> €</p>
-                        <form action="delete_article.php" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?');">
-                            <input type="hidden" name="article_id" value="<?php echo $article['id']; ?>">
-                            <input type="submit" value="Supprimer l'annonce">
-                        </form>
-                    </div>
+                    <?php if ($article['quantite'] > 0): ?>
+                        <div class="article">
+                            <img src="<?php echo htmlspecialchars($article['photo']); ?>" alt="<?php echo htmlspecialchars($article['nom']); ?>" width="200" height="200">
+                            <h3><?php echo htmlspecialchars($article['nom']); ?></h3>
+                            <p><?php echo htmlspecialchars($article['description']); ?></p>
+                            <p><?php echo htmlspecialchars($article['prix']); ?> €</p>
+                            <p>Quantité restante: <?php echo htmlspecialchars($article['quantite']); ?></p>
+                            <form action="delete_article.php" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?');">
+                                <input type="hidden" name="article_id" value="<?php echo $article['id']; ?>">
+                                <input type="submit" value="Supprimer l'annonce">
+                            </form>
+                        </div>
+                    <?php endif; ?>
                 <?php endforeach; ?>
             <?php else: ?>
                 <p>Vous n'avez pas encore d'annonces.</p>

@@ -42,7 +42,20 @@ $currentTheme = $stmt->fetch();
     <meta charset="UTF-8">
     <title>Personnalisation du Thème</title>
     <link href="style.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .btn-retour {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
 </head>
+
 <body>
 <div class="wrapper">
     <div class="header">
@@ -70,6 +83,7 @@ $currentTheme = $stmt->fetch();
     </div>
 
     <div class="section">
+        <a href="profile.php" class="btn-retour">Retour</a>
         <h2>Personnalisation du Thème</h2>
         <form method="post">
             <label for="theme">Choisissez un thème:</label>
