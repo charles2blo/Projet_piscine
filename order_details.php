@@ -30,18 +30,21 @@ if (!$commande) {
 }
 
 // Récupérer les articles associés à la commande
-$stmt = $pdo->prepare("SELECT ca.quantite, a.* FROM commandes_articles ca JOIN articles a ON ca.article_id = a.id WHERE ca.commande_id = ?");
+$stmt = $pdo->prepare("SELECT ca.quantite AS quantite_commandee, a.nom, a.description, a.photo, a.prix, a.etat 
+                        FROM commandes_articles ca 
+                        JOIN articles a ON ca.article_id = a.id 
+                        WHERE ca.commande_id = ?");
 $stmt->execute([$commande_id]);
 $articles_commandes = $stmt->fetchAll();
 
 // Récupérer l'adresse de livraison
-$adresse_livraison = $commande['adresse_livraison'];
+$adresse_livraison_json = $commande['adresse_livraison'];
+$adresse_livraison = json_decode($adresse_livraison_json, true);
 
 // Récupérer les détails de paiement
 $stmt = $pdo->prepare("SELECT * FROM cartes WHERE utilisateur_id = ?");
 $stmt->execute([$user_id]);
 $cartes = $stmt->fetchAll();
-
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -59,7 +62,7 @@ $cartes = $stmt->fetchAll();
     <div class="header">
         <h1>Agora Francia</h1>
         <div class="logo-notification">
-            <a href="notifications.html" class="notification-icon"><i class="fas fa-bell"></i></a>
+            <a href="notifications.php" class="notification-icon"><i class="fas fa-bell"></i></a>
             <img src="logo.png" width="100" height="100" alt="logoAgora">
         </div>
     </div>
@@ -99,7 +102,7 @@ $cartes = $stmt->fetchAll();
                         <h4><?php echo htmlspecialchars($article['nom'] ?? ''); ?></h4>
                         <p>Description: <?php echo htmlspecialchars($article['description'] ?? ''); ?></p>
                         <p>Prix: <?php echo htmlspecialchars($article['prix'] ?? ''); ?> €</p>
-                        <p>Quantité: <?php echo htmlspecialchars($article['quantite'] ?? ''); ?></p>
+                        <p>Quantité: <?php echo htmlspecialchars($article['quantite_commandee'] ?? ''); ?></p>
                         <p>État: <?php echo htmlspecialchars($article['etat'] ?? ''); ?></p>
                     </div>
                 </div>
@@ -112,7 +115,16 @@ $cartes = $stmt->fetchAll();
             <p><?php echo htmlspecialchars($carte['type_carte'] ?? ''); ?>: **** **** **** <?php echo htmlspecialchars(substr($carte['numero_carte'], -4) ?? ''); ?></p>
         <?php endforeach; ?>
         <h3>Adresse de livraison</h3>
-            <?php echo htmlspecialchars($adresse_livraison ?? ''); ?>
+        <?php if ($adresse_livraison): ?>
+            <p><?php echo htmlspecialchars($adresse_livraison['nom'] ?? ''); ?> <?php echo htmlspecialchars($adresse_livraison['prenom'] ?? ''); ?></p>
+            <p><?php echo htmlspecialchars($adresse_livraison['adresse_ligne1']); ?></p>
+            <p><?php echo htmlspecialchars($adresse_livraison['adresse_ligne2'] ?? ''); ?></p>
+            <p><?php echo htmlspecialchars($adresse_livraison['ville']); ?>, <?php echo htmlspecialchars($adresse_livraison['code_postal']); ?></p>
+            <p><?php echo htmlspecialchars($adresse_livraison['pays']); ?></p>
+            <p><?php echo htmlspecialchars($adresse_livraison['numero_telephone']); ?></p>
+        <?php else: ?>
+            <p>Adresse de livraison non spécifiée.</p>
+        <?php endif; ?>
     </div>
 </body>
 </html>

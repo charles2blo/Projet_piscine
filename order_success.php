@@ -29,7 +29,7 @@ try {
     // Récupérer les informations de livraison
     $stmt = $pdo->prepare("SELECT adresse_livraison FROM commandes WHERE id = ?");
     $stmt->execute([$commande_id]);
-    $livraison = $stmt->fetchColumn();
+    $livraison = json_decode($stmt->fetchColumn(), true);
 
     // Récupérer les informations de paiement
     $stmt = $pdo->prepare("SELECT c.type_carte, c.numero_carte FROM cartes c JOIN commandes cmd ON c.utilisateur_id = cmd.acheteur_id WHERE cmd.id = ?");
@@ -104,7 +104,18 @@ try {
     <p><?php echo htmlspecialchars($carte['type_carte']); ?>: **** **** **** <?php echo htmlspecialchars(substr($carte['numero_carte'], -4)); ?></p>
 
     <h3>Adresse de livraison:</h3>
-    <p><?php echo htmlspecialchars($livraison); ?></p>
+    <p>
+        <?php
+        echo htmlspecialchars($livraison['nom']) . ' ' . htmlspecialchars($livraison['prenom']) . '<br>';
+        echo htmlspecialchars($livraison['adresse_ligne1']) . '<br>';
+        if (!empty($livraison['adresse_ligne2'])) {
+            echo htmlspecialchars($livraison['adresse_ligne2']) . '<br>';
+        }
+        echo htmlspecialchars($livraison['ville']) . ', ' . htmlspecialchars($livraison['code_postal']) . '<br>';
+        echo htmlspecialchars($livraison['pays']) . '<br>';
+        echo htmlspecialchars($livraison['numero_telephone']);
+        ?>
+    </p>
 
 </div>
 </body>
