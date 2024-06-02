@@ -40,6 +40,17 @@ if ($commandes) {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="script.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .btn-retour {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 
 <body>
@@ -57,7 +68,7 @@ if ($commandes) {
         <a href="chat.php"><i class="fas fa-comments"></i> Chat</a>
         <a href="cart.php"><i class="fas fa-shopping-cart"></i> Panier</a>
     <?php if (isset($_SESSION['user_id'])): ?>
-        <a href="publish_article.php">Publier un article</a>
+        <a href="publish_article.php"><i class="fas fa-plus"Publier un article</a>
     <?php endif; ?>
     <div class="dropdown">
         <a href="#votrecompte" class="dropbtn"><i class="fas fa-user"></i> Votre Compte</a>
@@ -73,6 +84,7 @@ if ($commandes) {
     </div>
 </div>
 <div class="commandes">
+    <br>
     <a href="profile.php" class="btn-retour">Retour</a>
     <?php if ($commandes): ?>
         <?php foreach ($commandes as $commande): ?>

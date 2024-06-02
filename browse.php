@@ -5,6 +5,11 @@ include 'db_connect.php';
 $filters = [];
 $sql = "SELECT * FROM articles WHERE quantite > 0";
 
+// Recherche par nom
+if (isset($_GET['search']) && !empty($_GET['search'])) {
+    $filters[] = "nom LIKE :search";
+}
+
 // Filtrage par catégorie
 if (isset($_GET['categorie']) && !empty($_GET['categorie'])) {
     $filters[] = "categorie = :categorie";
@@ -25,11 +30,6 @@ if (isset($_GET['prix_max']) && is_numeric($_GET['prix_max'])) {
     $filters[] = "prix <= :prix_max";
 }
 
-// Filtrage par nom (recherche par mot-clé)
-if (isset($_GET['nom']) && !empty($_GET['nom'])) {
-    $filters[] = "nom LIKE :nom";
-}
-
 // Filtrage par type de vente
 if (isset($_GET['type_vente']) && !empty($_GET['type_vente'])) {
     $filters[] = "type_vente = :type_vente";
@@ -48,6 +48,10 @@ if (isset($_GET['sort_order']) && in_array($_GET['sort_order'], ['asc', 'desc'])
 try {
     $stmt = $pdo->prepare($sql);
 
+    if (isset($_GET['search']) && !empty($_GET['search'])) {
+        $stmt->bindValue(':search', '%' . $_GET['search'] . '%', PDO::PARAM_STR);
+    }
+
     if (isset($_GET['categorie']) && !empty($_GET['categorie'])) {
         $stmt->bindParam(':categorie', $_GET['categorie']);
     }
@@ -62,11 +66,6 @@ try {
 
     if (isset($_GET['prix_max']) && is_numeric($_GET['prix_max'])) {
         $stmt->bindParam(':prix_max', $_GET['prix_max']);
-    }
-
-    if (isset($_GET['nom']) && !empty($_GET['nom'])) {
-        $nom = '%' . $_GET['nom'] . '%';
-        $stmt->bindParam(':nom', $nom);
     }
 
     if (isset($_GET['type_vente']) && !empty($_GET['type_vente'])) {
@@ -90,102 +89,125 @@ try {
     <script src="script.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .filter-form { display: none; }
+        .filter-form.active { display: block; }
+        .filter-toggle { cursor: pointer; background-color: #007BFF; color: white; padding: 10px 20px; border-radius: 5px; margin-bottom: 10px; display: inline-block; }
+    </style>
+    <script>
+        $(document).ready(function(){
+            $(".filter-toggle").click(function(){
+                $(".filter-form").toggleClass("active");
+                if ($(".filter-form").hasClass("active")) {
+                    $(".filter-form").slideDown();
+                } else {
+                    $(".filter-form").slideUp();
+                }
+            });
+        });
+    </script>
 </head>
 <body>
 <div class="wrapper">
-    <header class="header">
-        <h1 class="header-title">Agora Francia</h1>
-        <img src="logo.png" width="100" height="100" alt="Logo Agora" class="logo">
-    </header>
-    <nav class="navigation">
-        <a href="index.html" class="nav-link"><i class="fas fa-home"></i> Accueil</a>
-        <a href="browse.php" class="nav-link"><i class="fas fa-th-list"></i> Tout Parcourir</a>
-        <a href="notifications.html" class="nav-link"><i class="fas fa-bell"></i> Notifications</a>
-        <a href="cart.php" class="nav-link"><i class="fas fa-shopping-cart"></i> Panier</a>
+    <div class="header">
+        <h1>Agora Francia</h1>
+        <div class="logo-notification">
+            <a href="notifications.html" class="notification-icon"><i class="fas fa-bell"></i></a>
+            <img src="logo.png" width="100" height="100" alt="logoAgora">
+        </div>
+    </div>
+    <div class="navigation">
+        <a href="index.html"><i class="fas fa-home"></i> Accueil</a>
+        <a href="browse.php"><i class="fas fa-th-list"></i> Tout Parcourir</a>
+        <a href="chat.php"><i class="fas fa-comments"></i> Chat</a>
+        <a href="cart.php"><i class="fas fa-shopping-cart"></i> Panier</a>
         <?php if (isset($_SESSION['user_id'])): ?>
-            <a href="publish_article.php" class="nav-link">Publier un article</a>
+            <a href="publish_article.php">Publier un article</a>
         <?php endif; ?>
         <div class="dropdown">
-            <a href="#votrecompte" class="dropbtn nav-link"><i class="fas fa-user"></i> Votre Compte</a>
+            <a href="#votrecompte" class="dropbtn"><i class="fas fa-user"></i> Votre Compte</a>
             <div class="dropdown-content">
                 <?php if (isset($_SESSION['user_id'])): ?>
-                    <a href="profile.php" class="dropdown-item">Mon Profil</a>
-                    <a href="logout.php" class="dropdown-item">Se Déconnecter</a>
+                    <a href="profile.php">Mon Profil</a>
+                    <a href="logout.php">Se Déconnecter</a>
                 <?php else: ?>
-                    <a href="#" id="login-btn" class="dropdown-item">Se connecter</a>
-                    <a href="#" id="signup-btn" class="dropdown-item">S'inscrire</a>
+                    <a href="#" id="login-btn">Se connecter</a>
+                    <a href="#" id="signup-btn">S'inscrire</a>
                 <?php endif; ?>
             </div>
         </div>
-    </nav>
+    </div>
 
-    <main class="section">
-        <h1>Articles Disponibles</h1>
+    <h1>Articles Disponibles</h1>
 
-        <!-- Formulaire de filtre -->
-        <form method="get" action="browse.php" class="filter-form">
-            <label for="categorie">Catégorie:</label>
-            <select name="categorie" id="categorie">
-                <option value="">Toutes</option>
-                <option value="meubles" <?php if(isset($_GET['categorie']) && $_GET['categorie'] == 'meubles') echo 'selected'; ?>>Meubles</option>
-                <option value="objets_art" <?php if(isset($_GET['categorie']) && $_GET['categorie'] == 'objets_art') echo 'selected'; ?>>Objets d'art</option>
-                <option value="accessoire_vip" <?php if(isset($_GET['categorie']) && $_GET['categorie'] == 'accessoire_vip') echo 'selected'; ?>>Accessoire VIP</option>
-                <option value="materiels_scolaires" <?php if(isset($_GET['categorie']) && $_GET['categorie'] == 'materiels_scolaires') echo 'selected'; ?>>Matériels scolaires</option>
-            </select>
+    <!-- Bouton pour afficher/cacher le formulaire de filtre -->
+    <div class="filter-toggle">Filtre</div>
 
-            <label for="etat">État:</label>
-            <select name="etat" id="etat">
-                <option value="">Tous</option>
-                <option value="neuf avec etiquette" <?php if(isset($_GET['etat']) && $_GET['etat'] == 'neuf avec etiquette') echo 'selected'; ?>>Neuf avec étiquette</option>
-                <option value="neuf sans etiquette" <?php if(isset($_GET['etat']) && $_GET['etat'] == 'neuf sans etiquette') echo 'selected'; ?>>Neuf sans étiquette</option>
-                <option value="tres bon etat" <?php if(isset($_GET['etat']) && $_GET['etat'] == 'tres bon etat') echo 'selected'; ?>>Très bon état</option>
-                <option value="bon etat" <?php if(isset($_GET['etat']) && $_GET['etat'] == 'bon etat') echo 'selected'; ?>>Bon état</option>
-                <option value="satisfaisant" <?php if(isset($_GET['etat']) && $_GET['etat'] == 'satisfaisant') echo 'selected'; ?>>Satisfaisant</option>
-            </select>
+    <!-- Formulaire de filtre -->
+    <form method="get" action="browse.php" class="filter-form">
+        <label for="search">Recherche par nom:</label>
+        <input type="text" name="search" id="search" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
 
-            <label for="prix_min">Prix minimum:</label>
-            <input type="number" name="prix_min" id="prix_min" value="<?php echo isset($_GET['prix_min']) ? htmlspecialchars($_GET['prix_min']) : ''; ?>">
+        <label for="categorie">Catégorie:</label>
+        <select name="categorie" id="categorie">
+            <option value="">Toutes</option>
+            <option value="meubles" <?php if(isset($_GET['categorie']) && $_GET['categorie'] == 'meubles') echo 'selected'; ?>>Meubles</option>
+            <option value="objets_art" <?php if(isset($_GET['categorie']) && $_GET['categorie'] == 'objets_art') echo 'selected'; ?>>Objets d'art</option>
+            <option value="accessoire_vip" <?php if(isset($_GET['categorie']) && $_GET['categorie'] == 'accessoire_vip') echo 'selected'; ?>>Accessoire VIP</option>
+            <option value="materiels_scolaires" <?php if(isset($_GET['categorie']) && $_GET['categorie'] == 'materiels_scolaires') echo 'selected'; ?>>Matériels scolaires</option>
+        </select>
 
-            <label for="prix_max">Prix maximum:</label>
-            <input type="number" name="prix_max" id="prix_max" value="<?php echo isset($_GET['prix_max']) ? htmlspecialchars($_GET['prix_max']) : ''; ?>">
+        <label for="type_vente">Type de vente:</label>
+        <select name="type_vente" id="type_vente">
+            <option value="">Tous</option>
+            <option value="achat immédiat" <?php if(isset($_GET['type_vente']) && $_GET['type_vente'] == 'achat immédiat') echo 'selected'; ?>>Achat Immédiat</option>
+            <option value="negociation" <?php if(isset($_GET['type_vente']) && $_GET['type_vente'] == 'negociation') echo 'selected'; ?>>Négociation</option>
+            <option value="enchère" <?php if(isset($_GET['type_vente']) && $_GET['type_vente'] == 'enchère') echo 'selected'; ?>>Enchère</option>
+        </select>
 
-            <label for="nom">Recherche:</label>
-            <input type="text" name="nom" id="nom" value="<?php echo isset($_GET['nom']) ? htmlspecialchars($_GET['nom']) : ''; ?>">
+        <label for="etat">État:</label>
+        <select name="etat" id="etat">
+            <option value="">Tous</option>
+            <option value="neuf avec etiquette" <?php if(isset($_GET['etat']) && $_GET['etat'] == 'neuf avec etiquette') echo 'selected'; ?>>Neuf avec étiquette</option>
+            <option value="neuf sans etiquette" <?php if(isset($_GET['etat']) && $_GET['etat'] == 'neuf sans etiquette') echo 'selected'; ?>>Neuf sans étiquette</option>
+            <option value="tres bon etat" <?php if(isset($_GET['etat']) && $_GET['etat'] == 'tres bon etat') echo 'selected'; ?>>Très bon état</option>
+            <option value="bon etat" <?php if(isset($_GET['etat']) && $_GET['etat'] == 'bon etat') echo 'selected'; ?>>Bon état</option>
+            <option value="satisfaisant" <?php if(isset($_GET['etat']) && $_GET['etat'] == 'satisfaisant') echo 'selected'; ?>>Satisfaisant</option>
+        </select>
 
-            <label for="type_vente">Type de vente:</label>
-            <select name="type_vente" id="type_vente">
-                <option value="">Tous</option>
-                <option value="enchere" <?php if(isset($_GET['type_vente']) && $_GET['type_vente'] == 'enchere') echo 'selected'; ?>>Enchère</option>
-                <option value="immédiat" <?php if(isset($_GET['type_vente']) && $_GET['type_vente'] == 'immédiat') echo 'selected'; ?>>Achat immédiat</option>
-                <option value="négociation" <?php if(isset($_GET['type_vente']) && $_GET['type_vente'] == 'négociation') echo 'selected'; ?>>Négociation</option>
-            </select>
+        <label for="prix_min">Prix minimum:</label>
+        <input type="number" name="prix_min" id="prix_min" value="<?php echo isset($_GET['prix_min']) ? htmlspecialchars($_GET['prix_min']) : ''; ?>">
 
-            <!-- Option de tri -->
-            <label for="sort_order">Trier par prix:</label>
-            <select name="sort_order" id="sort_order">
-                <option value="">Aucun</option>
-                <option value="asc" <?php if(isset($_GET['sort_order']) && $_GET['sort_order'] == 'asc') echo 'selected'; ?>>Prix croissant</option>
-                <option value="desc" <?php if(isset($_GET['sort_order']) && $_GET['sort_order'] == 'desc') echo 'selected'; ?>>Prix décroissant</option>
-            </select>
+        <label for="prix_max">Prix maximum:</label>
+        <input type="number" name="prix_max" id="prix_max" value="<?php echo isset($_GET['prix_max']) ? htmlspecialchars($_GET['prix_max']) : ''; ?>">
 
-            <input type="submit" value="Filtrer">
-        </form>
+        <!-- Option de tri -->
+        <label for="sort_order">Classer par:</label>
+        <select name="sort_order" id="sort_order">
+            <option value="">Sélectionner</option>
+            <option value="asc" <?php if(isset($_GET['sort_order']) && $_GET['sort_order'] == 'asc') echo 'selected'; ?>>Prix croissant</option>
+            <option value="desc" <?php if(isset($_GET['sort_order']) && $_GET['sort_order'] == 'desc') echo 'selected'; ?>>Prix décroissant</option>
+        </select>
 
-        <div class="articles-grid">
-            <?php foreach ($articles as $article): ?>
-                <div class="article">
-                    <img src="images/<?php echo htmlspecialchars($article['image']); ?>" alt="<?php echo htmlspecialchars($article['nom']); ?>">
-                    <h2><?php echo htmlspecialchars($article['nom']); ?></h2>
-                    <p>Catégorie: <?php echo htmlspecialchars($article['categorie']); ?></p>
-                    <p>État: <?php echo htmlspecialchars($article['etat']); ?></p>
-                    <p>Prix: €<?php echo htmlspecialchars($article['prix']); ?></p>
-                    <a href="article.php?id=<?php echo $article['id']; ?>" class="btn">Voir plus</a>
-                </div>
-            <?php endforeach; ?>
-        </div>
-    </main>
+        <input type="submit" value="Filtrer">
+    </form>
+
+    <div class="articles-grid">
+        <?php foreach ($articles as $article): ?>
+            <div class="article">
+                <h3><?php echo htmlspecialchars($article['nom']); ?></h3>
+                <p>Prix: <?php echo htmlspecialchars($article['prix']); ?> €</p>
+                <p>Type de vente: <?php echo htmlspecialchars($article['type_vente']); ?></p>
+                <?php if ($article['photo']): ?>
+                    <a href="article_details.php?id=<?php echo $article['id']; ?>"><img src="<?php echo htmlspecialchars($article['photo']); ?>" alt="Photo de l'article"></a>
+                <?php endif; ?>
+            </div>
+        <?php endforeach; ?>
+    </div>
     <footer class="footer">
-        <p>&copy; 2023 Agora Francia. Tous droits réservés.</p>
+        <p>
+            Contactez-nous : <a href="mailto:contact@agorafrancia.fr">contact@agorafrancia.fr</a> | Téléphone : <a href="tel:+33123456789">01 23 45 67 89</a> | Bureau : <a href="https://www.google.fr/maps/place/37+Quai+de+Grenelle,+75015+Paris/@48.8515004,2.2846575,17z/data=!3m1!4b1!4m6!3m5!1s0x47e6700497ee3ec5:0xdd60f514adcdb346!8m2!3d48.8515004!4d2.2872324?entry=ttu" target="_blank"><i class="fas fa-map-marker-alt"></i> Localisation</a>
+        </p>
     </footer>
 </div>
 </body>

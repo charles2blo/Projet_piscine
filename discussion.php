@@ -51,6 +51,16 @@ try {
     ");
     $stmt->execute([$article_id, $vendeur_id, $user_id]);
     $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Récupérer l'adresse de l'acheteur
+    $stmt = $pdo->prepare("SELECT adresse_ligne1, adresse_ligne2, ville, code_postal, pays, numero_telephone FROM adresses WHERE utilisateur_id = ?");
+    $stmt->execute([$user_id]);
+    $adresse_acheteur = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$adresse_acheteur) {
+        throw new Exception("Adresse de l'acheteur non trouvée");
+    }
+    $adresse_complet = $adresse_acheteur['adresse_ligne1'] . ' ' . $adresse_acheteur['adresse_ligne2'] . ', ' . $adresse_acheteur['ville'] . ', ' . $adresse_acheteur['code_postal'] . ', ' . $adresse_acheteur['pays'] . ', ' . $adresse_acheteur['numero_telephone'];
+
 } catch (PDOException $e) {
     echo "Erreur: " . $e->getMessage();
     die();
@@ -59,14 +69,46 @@ try {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $message = $_POST['message'];
     $action = isset($_POST['action']) ? $_POST['action'] : null;
+    $montant_offre = isset($_POST['montant_offre']) ? $_POST['montant_offre'] : null;
 
     if ($action) {
         if ($action == 'accept') {
-            $message = "Votre offre a été acceptée. Vous pouvez maintenant ajouter l'article à votre panier.";
+            // Vérifier si le montant de l'offre est défini
+            $montant_offre = isset($_POST['hidden_montant_offre']) ? $_POST['hidden_montant_offre'] : null;
+            if ($montant_offre === null) {
+                throw new Exception("Montant de l'offre non défini");
+            }
+
+            try {
+                // Créer la commande
+                $stmt = $pdo->prepare("INSERT INTO commandes (acheteur_id, article_id, quantite, prix_total, date_commande, status, adresse_livraison) VALUES (?, ?, 1, ?, NOW(), 'en attente', ?)");
+                $stmt->execute([$user_id, $article_id, $montant_offre, $adresse_complet]);
+                $commande_id = $pdo->lastInsertId();
+
+                // Ajouter l'article à la commande
+                $stmt = $pdo->prepare("INSERT INTO commandes_articles (commande_id, article_id, quantite) VALUES (?, ?, 1)");
+                $stmt->execute([$commande_id, $article_id]);
+
+                // Mettre à jour la quantité de l'article
+                $stmt = $pdo->prepare("UPDATE articles SET quantite = quantite - 1 WHERE id = ?");
+                $stmt->execute([$article_id]);
+
+                // Envoyer un message de confirmation avec lien vers la commande
+                $confirmation_message = "Votre offre a été acceptée. Votre commande a été créée avec succès.";
+                $stmt = $pdo->prepare("INSERT INTO messagerie (user_id, vendeur_id, article_id, message) VALUES (?, ?, ?, ?)");
+                $stmt->execute([$user_id, $vendeur_id, $article_id, $confirmation_message]);
+
+                header("Location: discussion.php?article_id=$article_id&vendeur_id=$vendeur_id");
+                exit;
+            } catch (PDOException $e) {
+                echo "Erreur: " . $e->getMessage();
+                die();
+            }
         } elseif ($action == 'reject') {
             $message = "Votre offre a été refusée.";
-        } elseif ($action == 'counter') {
-            $message = "Contre-offre : " . $message;
+        } elseif ($action == 'offer') {
+            $_SESSION['montant_offre'] = $montant_offre;
+            $message = "Proposition de prix : " . $montant_offre;
         }
     }
 
@@ -165,21 +207,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             text-decoration: none;
         }
         .btn-primary:hover {
-            background-color: #0056b3;
+            background-color: #45a049;
         }
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #333;
-            color: white;
-        }
-        .footer a {
+        .btn-retour {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
             color: white;
             text-decoration: none;
-        }
-        .footer a:hover {
-            text-decoration: underline;
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -187,7 +224,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <div class="header">
     <h1>Agora Francia</h1>
     <div class="logo-notification">
-        <a href="notifications.html" class="notification-icon"><i class="fas fa-bell"></i></a>
+        <a href="notifications.php" class="notification-icon"><i class="fas fa-bell"></i></a>
         <img src="logo.png" width="100" height="100" alt="logoAgora">
     </div>
 </div>
@@ -214,7 +251,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </div>
 
 <div class="section">
+
     <h2>Discussion sur l'article : <?php echo htmlspecialchars($messages[0]['article_nom']); ?></h2>
+    <a href="chat.php" class="btn-retour">Retour</a>
     <div class="messages">
         <?php if (count($messages) > 0): ?>
             <?php foreach ($messages as $message): ?>
@@ -228,24 +267,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php endif; ?>
     </div>
 
-    <?php if (isset($messages) && end($messages)['message'] == "Votre offre a été acceptée. Vous pouvez maintenant ajouter l'article à votre panier.") : ?>
-        <a href="add_to_cart.php?article_id=<?php echo $article_id; ?>" class="btn-primary">Ajouter au Panier</a>
-    <?php endif; ?>
-
     <form method="post" action="discussion.php?article_id=<?php echo $article_id; ?>&vendeur_id=<?php echo $vendeur_id; ?>">
         <textarea id="message" name="message" required></textarea>
-        <button type="submit"><i class="fas fa-paper-plane"></i></button>
         <?php if ($user_id == $vendeur_id): ?>
+            <input type="hidden" name="hidden_montant_offre" value="<?php echo isset($_SESSION['montant_offre']) ? $_SESSION['montant_offre'] : ''; ?>">
             <button type="submit" name="action" value="accept">Accepter</button>
             <button type="submit" name="action" value="reject">Refuser</button>
-            <button type="submit" name="action" value="counter">Faire une contre-offre</button>
+        <?php else: ?>
+            <input type="number" name="montant_offre" placeholder="Montant de l'offre" required>
+            <button type="submit" name="action" value="offer">Proposer</button>
         <?php endif; ?>
     </form>
 </div>
 
 <footer class="footer">
     <p>
-        Contactez-nous : <a href="mailto:contact@agorafrancia.fr">contact@agorafrancia.fr</a> | Téléphone : <a href="tel:+33123456789">01 23 45 67 89</a> | Bureau : <a href="https://www.google.fr/maps/place/37+Quai+de+Grenelle,+75015+Paris/@48.8515004,2.2846575,17z/data=!3m1!4b1!4m6!3m5!1s0x47e6700497ee3ec5:0xdd60f514adcdb346!8m2!3d48.8515004!4d2.2872324!16s%2Fg%2F11bw3y1mf8?entry=ttu" target="_blank"><i class="fas fa-map-marker-alt"></i> Localisation</a>
+        Contactez-nous : <a href="mailto:contact@agorafrancia.fr">contact@agorafrancia.fr</a> | Téléphone : <a href="tel:+33123456789">01 23 45 67 89</a> | Bureau : <a href="https://www.google.fr/maps/place/37+Quai+de+Grenelle,+75015+Paris/@48.8515004,2.2846575,17z/data=!3m1!4b1!4m6!3m5!1s0x47e6700497ee3ec5:0xdd60f514adcdb346!8m2!3d48.8515004!4d2.2872324?entry=ttu" target="_blank"><i class="fas fa-map-marker-alt"></i> Localisation</a>
     </p>
 </footer>
 </body>

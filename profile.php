@@ -58,6 +58,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['demande_statut'])) {
             });
         });
     </script>
+    <style>
+        .btn-retour {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .btn-retour:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
 <div class="wrapper">
@@ -86,8 +100,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['demande_statut'])) {
     </div>
     <div class="section">
         <h2>Mon Profil</h2>
-        <img src="<?php echo htmlspecialchars($user['photo']); ?>" alt="Photo de Profil" width="150" height="150"><br>
-        <a href="upload_photo.php">Changer de photo</a><br>
+        <img src="<?php echo htmlspecialchars($user['photo']); ?>" alt="Photo de Profil" class="profile-pic" width="150" height="150"><br>
+        <a href="upload_photo.php" class="btn-retour">Changer de photo</a><br>
         <strong>Nom :</strong> <?php echo htmlspecialchars($user['prenom'] . ' ' . $user['nom']); ?><br>
         <strong>Email :</strong> <?php echo htmlspecialchars($user['email']); ?><br>
         <strong>Statut :</strong> <?php echo htmlspecialchars($user['type_utilisateur']); ?><br>
@@ -129,20 +143,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['demande_statut'])) {
             <a href="add_card.php" class="btn btn-success">Ajouter un moyen de paiement</a>
         </div>
 
-        <h3><a href="mes_commandes.php">Mes Commandes</a></h3>
+        <h3><a href="mes_commandes.php" class="btn-retour">Mes Commandes</a></h3>
 
-        <h3><a href="mes-annonces.php">Mes annonces</a></h3>
+        <h3><a href="mes-annonces.php" class="btn-retour">Mes annonces</a></h3>
 
-        <h3>Ma Wishlist</h3>
-        <!-- Code pour afficher les articles likés -->
-        <h3>Personnalisation</h3>
-        <!-- Code pour personnaliser le thème -->
+        <h3><a href="personnalisation.php" class="btn-retour">Personnalisation</a></h3>
 
         <?php if ($user['type_utilisateur'] == 'admin'): ?>
-            <h3><a href="manage_sellers.php" class="btn">Gestion des vendeurs</a></h3>
+            <h3><a href="manage_sellers.php" class="btn-retour">Gestion des vendeurs</a></h3>
         <?php endif; ?>
 
-        <h3><a href="logout.php">Se Déconnecter</a></h3>
+        <h3><a href="logout.php" class="btn-retour">Se Déconnecter</a></h3>
 
         <?php if ($user['type_utilisateur'] == 'acheteur'): ?>
             <h3>Voulez-vous publier des articles sur Agora Francia ?</h3>
@@ -165,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['demande_statut'])) {
 
     </div>
     <footer class="footer">
-        <p>Contactez-nous : <a href="mailto:contact@agorafrancia.fr">contact@agorafrancia.fr</a> | Téléphone : <a href="tel:+33123456789">01 23 45 67 89</a> | <a href="https://www.google.fr/maps/place/37+Quai+de+Grenelle,+75015+Paris/@48.8515004,2.2846575,17z/data=!3m1!4b1!4m6!3m5!1s0x47e6700497ee3ec5:0xdd60f514adcdb346!8m2!3d48.8515004!4d2.2872324!16s%2Fg%2F11bw3y1mf8?entry=ttu" target="_blank"><i class="fas fa-map-marker-alt"></i> Localisation</a>
+        <p>Contactez-nous : <a href="mailto:contact@agorafrancia.fr">contact@agorafrancia.fr</a> | Téléphone : <a href="tel:+33123456789">01 23 45 67 89</a> | <a href="https://www.google.fr/maps/place/37+Quai+de+Grenelle,+75015+Paris/@48.8515004,2.2846575,17z/data=!3m1!4b1!4m6!3m5!1s0x47e6700497ee3ec5:0xdd60f514adcdb346!8m2!3d48.8515004!4d2.2872324?entry=ttu" target="_blank"><i class="fas fa-map-marker-alt"></i> Localisation</a>
         </p>
     </footer>
 </div>

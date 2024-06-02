@@ -55,6 +55,17 @@ $cartes = $stmt->fetchAll();
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="script.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .btn-retour {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 
 <body>
@@ -87,6 +98,8 @@ $cartes = $stmt->fetchAll();
             </div>
         </div>
     </div>
+    <br>
+    <a href="mes_commandes.php" class="btn-retour">Retour</a>
     <h1>Détails de la Commande #<?php echo htmlspecialchars($commande['id'] ?? ''); ?></h1>
     <div class="commande-details">
         <p>Date: <?php echo htmlspecialchars($commande['date_commande'] ?? ''); ?></p>
